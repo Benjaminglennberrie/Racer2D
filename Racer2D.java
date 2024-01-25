@@ -50,13 +50,13 @@ public class Racer2D {
         appFrame = new JFrame("Scuffed Rainbow Road");
         XOFFSET = 0;
         YOFFSET = 0;
-        WINWIDTH = 1900; //500    2000
-        WINHEIGHT = 1025; //500   1000
+        WINWIDTH = 1280; //500    2000
+        WINHEIGHT = 720; //500   1000
 
         endgame = false;
 
-        p1width = 100; //30
-        p1height = 100; //30
+        p1width = 50; //30
+        p1height = 50; //30
         p1originalX = (double) XOFFSET + ((double) WINWIDTH / 2.15) - (p1width / 2.0);
         p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 1.15) - (p1height / 2.0);
 
