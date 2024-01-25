@@ -50,22 +50,25 @@ public class Racer2D {
         appFrame = new JFrame("Scuffed Rainbow Road");
         XOFFSET = 0;
         YOFFSET = 0;
-        WINWIDTH = 500; //500    2660
-        WINHEIGHT = 500; //500   1412
+        WINWIDTH = 1900; //500    2000
+        WINHEIGHT = 1025; //500   1000
 
         endgame = false;
 
-        p1width = 30;
-        p1height = 30;
+        p1width = 100; //30
+        p1height = 100; //30
         p1originalX = (double) XOFFSET + ((double) WINWIDTH / 2.15) - (p1width / 2.0);
         p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 1.15) - (p1height / 2.0);
 
         try { // IO
-            player1 = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/bluecar1.png") );
-            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/rainbowroad.png") );
+//            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\bluecar1.png") );
+            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\marioplayer.png") );
+
+
+            OnTrack = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\largerrainbowroad.png") );
 //            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/rainbowroad.png") );
+            OffTrack = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\largerrainbowroad.png") );
 //            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
         } catch (IOException e) {
@@ -74,7 +77,7 @@ public class Racer2D {
     }
 
     public static class BackgroundMusic implements Runnable {
-        private String file = "/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/lobbymusic.wav";
+        private String file = "C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\MarioKart64.wav";
 
         public BackgroundMusic() {}
 
@@ -215,8 +218,8 @@ public class Racer2D {
         public PlayerMover() {
             velocitystep = 0.02; // aka accel
             rotatestep = 0.03;
-            maxvelocity = 2;
-            brakingforce = 0.02;
+            maxvelocity = 5;
+            brakingforce = 0.04;
         }
 
         public void run() {
@@ -501,10 +504,6 @@ public class Racer2D {
     public static void main(String[] args) {
         setup();
 
-
-
-
-
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appFrame.setSize(WINWIDTH, WINHEIGHT);
 
@@ -544,11 +543,11 @@ public class Racer2D {
         Random rand  = new Random();
         int rand_int1 = rand.nextInt(3);
         if (rand_int1 == 2) {
-            BackgroundMusic menu_theme = new BackgroundMusic("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/lobbymusic.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\MarioKart64.wav");
             menu_theme.play();
         }
         else {
-            BackgroundMusic menu_theme = new BackgroundMusic("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/Rainbow-Road-Mario-Kart-Wii.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\Rainbow-Road-Mario-Kart-Wii.wav");
             menu_theme.play();
         }
     }
