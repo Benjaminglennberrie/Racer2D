@@ -228,11 +228,11 @@ public class Racer2D {
                     Thread.sleep(10);
                 } catch (InterruptedException e) { }
 
-//                if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-//                    maxvelocity = 0.8;
-//                } else {
-//                    maxvelocity = 2;
-//                }
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                    maxvelocity = 0.8;
+                } else {
+                    maxvelocity = 2;
+                }
 
                 if (upPressed == true) {
                     if (p1velocity < maxvelocity) {
@@ -281,11 +281,11 @@ public class Racer2D {
         private double velocitystep, rotatestep, maxvelocity, brakingforce;
     }
 
-//    private static boolean isCollidingWithGrass(double bluecarX, double bluecarY, BufferedImage grass) {
-//        int pixelColor = grass.getRGB((int) bluecarX, (int) bluecarY);
-//
-//        return (pixelColor & 0xFF000000) != 0;
-//    }
+    private static boolean isCollidingWithGrass(double bluecarX, double bluecarY, BufferedImage grass) {
+        int pixelColor = grass.getRGB((int) bluecarX, (int) bluecarY);
+
+        return (pixelColor & 0xFF000000) != 0;
+    }
 
     // moveable image objects
     private static class ImageObject {
