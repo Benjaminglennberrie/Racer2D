@@ -60,15 +60,24 @@ public class Racer2D {
         p1originalX = (double) XOFFSET + ((double) WINWIDTH / 2.15) - (p1width / 2.0);
         p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 1.15) - (p1height / 2.0);
 
+
+        nitroFlamePNGWidth = 25;
+        nitroFlamePNGHeight = 25;
+
+
         try { // IO
 //            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\bluecar1.png") );
-            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\marioplayer.png") );
+            player1 = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/marioplayer.png") );
 
 
-            OnTrack = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\largerrainbowroad.png") );
+            nitroFlamePNG = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/nitroboostflame.png") );
+
+
+
+            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/largerrainbowroad.png") );
 //            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            OffTrack = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\largerrainbowroad.png") );
+            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/largerrainbowroadspace.png") );
 //            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
         } catch (IOException e) {
@@ -76,8 +85,11 @@ public class Racer2D {
         }
     }
 
+
+
+
     public static class BackgroundMusic implements Runnable {
-        private String file = "C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\MarioKart64.wav";
+        private String file = "/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/Rainbow-Road-Mario-Kart-Wii.wav";
 
         public BackgroundMusic() {}
 
@@ -197,6 +209,27 @@ public class Racer2D {
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
 
+//                if (spacePressed ==true) {
+//                    g2D.drawImage(nitroFlamePNG, 1400, 700, null);
+//                }
+
+//not working
+                if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                    // Show nitro flame at the player's location
+                    g2D.drawImage(nitroFlamePNG, (int) (p1.getX() + 0.5), (int) (p1.getY() + 0.5), null);
+                }
+                long currentTime = System.currentTimeMillis();
+                currentLapTime = currentTime - lapStartTime;
+                // Check for a new best lap time
+                if (currentLapTime < bestLapTime) {
+                    bestLapTime = currentLapTime;
+                }
+//                // Display stopwatch and best lap time in the top right corner
+//                g2D.setColor(Color.BLACK);
+//                g2D.drawString("Time: " + formatTime(currentTime - startTime), WINWIDTH - 150, 20);
+//                g2D.drawString("Best Lap: " + formatTime(bestLapTime), WINWIDTH - 150, 40);
+
+
                 g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int)(p1.getX() + 0.5),
                         (int)(p1.getY() + 0.5), null);
 
@@ -208,10 +241,27 @@ public class Racer2D {
                     Thread.sleep(32);
                 } catch (InterruptedException e) {
 
+
+
                 }
             }
+
+//            private static String formatTime(long time) {
+//                long seconds = time / 1000;
+//                long milliseconds = time % 1000;
+//                return String.format("%02d:%03d", seconds, milliseconds);
+//            }
+
+
         }
+
+
+
     }
+
+
+
+
 
     // thread responsible for updating player movement
     private static class PlayerMover implements Runnable {
@@ -220,6 +270,8 @@ public class Racer2D {
             rotatestep = 0.03;
             maxvelocity = 5;
             brakingforce = 0.04;
+            nitroBoost = 4;
+
         }
 
         public void run() {
@@ -228,11 +280,24 @@ public class Racer2D {
                     Thread.sleep(10);
                 } catch (InterruptedException e) { }
 
+
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     maxvelocity = 0.8;
                 } else {
-                    maxvelocity = 2;
+                    maxvelocity = 3;
                 }
+
+
+
+                if (spacePressed == true && isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack) == false) {
+                    //CHEAT
+                    // Apply nitro boost when spacebar is pressed
+                    maxvelocity += nitroBoost;
+                    velocitystep = 0.04;
+
+                    System.out.println("BOOOOOOOST");
+                }
+
 
                 if (upPressed == true) {
                     if (p1velocity < maxvelocity) {
@@ -242,6 +307,8 @@ public class Racer2D {
                     }
                 }
                 if (downPressed == true) {
+                    System.out.println("down IS BEING PRESSED");
+
                     if (p1velocity < -1) { // ensure max rev speed
                         p1velocity = -1;
                     } else {
@@ -264,7 +331,7 @@ public class Racer2D {
                 }
 
                 // apply drag force
-                if (!upPressed && !downPressed && !leftPressed && !rightPressed
+                if (!upPressed && !downPressed && !leftPressed && !rightPressed && !spacePressed
                         && p1velocity != 0) {
                     if ((p1velocity - 0.1) < 0) {
                         p1velocity = 0;
@@ -278,7 +345,7 @@ public class Racer2D {
                 p1.screenBounds(XOFFSET, WINWIDTH, YOFFSET, WINHEIGHT);
             }
         }
-        private double velocitystep, rotatestep, maxvelocity, brakingforce;
+        private double velocitystep, rotatestep, maxvelocity, brakingforce, nitroBoost;
     }
 
     private static boolean isCollidingWithGrass(double bluecarX, double bluecarY, BufferedImage grass) {
@@ -444,6 +511,8 @@ public class Racer2D {
             if (action.equals("DOWN")) { downPressed = true; }
             if (action.equals("LEFT")) { leftPressed = true; }
             if (action.equals("RIGHT")) { rightPressed = true; }
+            if (action.equals("SPACE")) { spacePressed = true; }
+
         }
 
         private String action;
@@ -460,6 +529,8 @@ public class Racer2D {
             if (action.equals("DOWN")) { downPressed = false; }
             if (action.equals("LEFT")) { leftPressed = false; }
             if (action.equals("RIGHT")) { rightPressed = false; }
+            if (action.equals("SPACE")) { spacePressed = false; }
+
         }
 
         private String action;
@@ -481,6 +552,7 @@ public class Racer2D {
             downPressed = false;
             leftPressed = false;
             rightPressed = false;
+            spacePressed = false;
 
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0.0);
             p1velocity = 0.0;
@@ -532,6 +604,8 @@ public class Racer2D {
         bindKey(myPanel, "DOWN");
         bindKey(myPanel, "LEFT");
         bindKey(myPanel, "RIGHT");
+        bindKey(myPanel, "SPACE");
+
 
         myPanel.setBackground(CELESTIAL);
         appFrame.getContentPane().add(myPanel, "Center");
@@ -543,17 +617,24 @@ public class Racer2D {
         Random rand  = new Random();
         int rand_int1 = rand.nextInt(3);
         if (rand_int1 == 2) {
-            BackgroundMusic menu_theme = new BackgroundMusic("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\MarioKart64.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/MarioKart64.wav");
             menu_theme.play();
         }
         else {
-            BackgroundMusic menu_theme = new BackgroundMusic("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\Rainbow-Road-Mario-Kart-Wii.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/Rainbow-Road-Mario-Kart-Wii.wav");
             menu_theme.play();
         }
     }
 
+
+
+    private static long startTime;
+    private static long lapStartTime;
+    private static long bestLapTime = Long.MAX_VALUE;
+    private static long currentLapTime;
+
     private static Boolean endgame;
-    private static Boolean upPressed, downPressed, leftPressed, rightPressed;
+    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
 
     private static JButton startButton, quitButton;
 
@@ -564,12 +645,12 @@ public class Racer2D {
     private static int XOFFSET, YOFFSET, WINWIDTH, WINHEIGHT;
 
     private static ImageObject p1, p2; // player1 and player2 racecar object
-    private static double p1width, p1height, p1originalX, p1originalY, p1velocity;
+    private static double p1width, p1height, p1originalX, p1originalY, p1velocity, nitroFlamePNGWidth, nitroFlamePNGHeight;
 
     private static JFrame appFrame;
 
     private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
 
     private static BufferStrategy bs;
-    private static BufferedImage OnTrack, OffTrack, player1; // TODO: add player2
+    private static BufferedImage OnTrack, OffTrack, player1, nitroFlamePNG; // TODO: add player2
 }
