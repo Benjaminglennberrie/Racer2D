@@ -67,17 +67,17 @@ public class Racer2D {
 
         try { // IO
 //            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\bluecar1.png") );
-            player1 = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/marioplayer.png") );
+            player1 = ImageIO.read( new File("res/marioplayer.png") );
 
 
-            nitroFlamePNG = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/nitroboostflame.png") );
+//            nitroFlamePNG = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/nitroboostflame.png") );
 
 
 
-            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/largerrainbowroad.png") );
+            OnTrack = ImageIO.read( new File("res/largerrainbowroad.png") );
 //            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/largerrainbowroadspace.png") );
+            OffTrack = ImageIO.read( new File("res/largerrainbowroadspace.png") );
 //            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
         } catch (IOException e) {
@@ -89,7 +89,7 @@ public class Racer2D {
 
 
     public static class BackgroundMusic implements Runnable {
-        private String file = "/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/Rainbow-Road-Mario-Kart-Wii.wav";
+        private String file = "res/Rainbow-Road-Mario-Kart-Wii.wav";
 
         public BackgroundMusic() {}
 
@@ -617,11 +617,11 @@ public class Racer2D {
         Random rand  = new Random();
         int rand_int1 = rand.nextInt(3);
         if (rand_int1 == 2) {
-            BackgroundMusic menu_theme = new BackgroundMusic("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/MarioKart64.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("res/MarioKart64.wav");
             menu_theme.play();
         }
         else {
-            BackgroundMusic menu_theme = new BackgroundMusic("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/Rainbow-Road-Mario-Kart-Wii.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("res/Rainbow-Road-Mario-Kart-Wii.wav");
             menu_theme.play();
         }
     }
