@@ -1,5 +1,6 @@
 package src.src;
 
+import java.awt.image.ImageObserver;
 import java.util.Random;
 import java.util.Vector;
 
@@ -70,7 +71,7 @@ public class Racer2D {
             player1 = ImageIO.read( new File("res/marioplayer.png") );
 
 
-//            nitroFlamePNG = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D/res/nitroboostflame.png") );
+            nitroFlamePNG = ImageIO.read( new File("res/nitroboostflame.png") );
 
 
 
@@ -194,7 +195,7 @@ public class Racer2D {
         }
     }
 
-    private static class Animate implements Runnable {
+    private static class Animate implements Runnable, ImageObserver {
         public void run() {
             bs = appFrame.getBufferStrategy();
             if (bs == null){
@@ -204,20 +205,35 @@ public class Racer2D {
             while (!endgame) {
                 Graphics g = bs.getDrawGraphics();
                 Graphics2D g2D = (Graphics2D) g;
+                if (spacePressed ==true) {
+                    g2D.drawImage(nitroFlamePNG, 1400, 700, null);
+                }
 
                 // draw track
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
 
-//                if (spacePressed ==true) {
-//                    g2D.drawImage(nitroFlamePNG, 1400, 700, null);
-//                }
+
+                g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int)(p1.getX() + 0.5),
+                        (int)(p1.getY() + 0.5), null);
+
 
 //not working
-                if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-                    // Show nitro flame at the player's location
-                    g2D.drawImage(nitroFlamePNG, (int) (p1.getX() + 0.5), (int) (p1.getY() + 0.5), null);
-                }
+
+
+
+//                AffineTransformOp rotation = rotateImageObject(p1);
+//
+//                g2D.drawImage(rotation.filter(nitroFlamePNG, null), (int) p1.getX(), (int) p1.getY(), null);
+
+//                if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+//                    // Show nitro flame at the player's location
+//                    AffineTransformOp rotation = rotateImageObject(p1);
+//                    g2D.drawImage(rotation.filter(nitroFlamePNG, null), (int) p1.getX(), (int) p1.getY(), null);
+//                    System.out.println("FLAME");
+//                }
+
+
                 long currentTime = System.currentTimeMillis();
                 currentLapTime = currentTime - lapStartTime;
                 // Check for a new best lap time
@@ -230,8 +246,6 @@ public class Racer2D {
 //                g2D.drawString("Best Lap: " + formatTime(bestLapTime), WINWIDTH - 150, 40);
 
 
-                g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int)(p1.getX() + 0.5),
-                        (int)(p1.getY() + 0.5), null);
 
                 g.dispose();
                 g2D.dispose(); // dispose old objects
@@ -255,7 +269,10 @@ public class Racer2D {
 
         }
 
-
+        @Override
+        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
+            return true;
+        }
 
     }
 
@@ -277,7 +294,7 @@ public class Racer2D {
         public void run() {
             while (!endgame) {
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(9);
                 } catch (InterruptedException e) { }
 
 
@@ -485,11 +502,15 @@ public class Racer2D {
 
     // rotates ImageObject
     private static AffineTransformOp rotateImageObject(ImageObject obj) {
-        AffineTransform at = AffineTransform.getRotateInstance(-obj.getAngle(),
-                obj.getWidth()/2.0, obj.getHeight()/2.0);
-        AffineTransformOp atop = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-        return atop;
+        AffineTransform at = new AffineTransform();
+        at.translate(obj.getWidth() / 2.0, obj.getHeight() / 2.0);
+        at.rotate(-obj.getAngle());
+        at.translate(-obj.getWidth() / 2.0, -obj.getHeight() / 2.0);
+        return new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
     }
+
+
+
 
     // initiates key actions from panel key responses
     private static void bindKey(JPanel panel, String input) {
@@ -557,7 +578,7 @@ public class Racer2D {
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0.0);
             p1velocity = 0.0;
 
-            try { Thread.sleep(50); } catch (InterruptedException ie) { }
+            try { Thread.sleep(32); } catch (InterruptedException ie) { }
 
             endgame = false;
             Thread t1 = new Thread( new Animate() );
