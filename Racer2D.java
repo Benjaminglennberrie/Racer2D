@@ -637,7 +637,7 @@ public class Racer2D {
             }
 
 
-            if (previousSegment == 15 && x < leftEdge) {
+            if (previousSegment == 15 && x < leftEdge+20) {
                     moveto(rightEdge-50, getY());
                     p1velocity = p1velocity * 0.9;
                     System.out.println("Mario is touching left");
@@ -648,8 +648,8 @@ public class Racer2D {
                 }
 
 
-            if (previousSegment == 20 && y < topEdge) {
-                    moveto(getX(), (bottomEdge-50) - getHeight());
+            if (previousSegment == 20 && y < topEdge+20) {
+                    moveto(getX(), (bottomEdge-10) - getHeight());
                     p1velocity = p1velocity * 0.9;
                     System.out.println("Mario is touching top");
                     previousSegment = 5;
