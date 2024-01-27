@@ -75,7 +75,7 @@ public class Racer2D {
 
 
 
-            OnTrack = ImageIO.read( new File("res/largerrainbowroad.png") );
+            OnTrack = ImageIO.read( new File("res/largerrainbowroadSegment1.png") );
 //            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
             OffTrack = ImageIO.read( new File("res/largerrainbowroadspace.png") );
@@ -89,10 +89,12 @@ public class Racer2D {
 
 
 
+
+
+
     public static class BackgroundMusic implements Runnable {
         private String file = "res/Rainbow-Road-Mario-Kart-Wii.wav";
 
-        public BackgroundMusic() {}
 
         public BackgroundMusic(String file) {
             this.file = file;
@@ -123,6 +125,16 @@ public class Racer2D {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
     private static void setButtonAppearance(JButton button) {
         button.setBorder(BorderFactory.createCompoundBorder(
                 new RoundBorder(15, URANIAN),
@@ -150,6 +162,19 @@ public class Racer2D {
         button.setOpaque(false);
         button.setFocusPainted(false);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private static class RoundBorder implements Border { // Used for rounded buttons
         private int radius;
@@ -180,6 +205,19 @@ public class Racer2D {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
     private static class MyButton extends JButton {
         public MyButton(String text) {
             super(text);
@@ -195,86 +233,70 @@ public class Racer2D {
         }
     }
 
+
+
+
+
+
+
+
     private static class Animate implements Runnable, ImageObserver {
         public void run() {
             bs = appFrame.getBufferStrategy();
-            if (bs == null){
+            if (bs == null) {
                 return;
             }
 
             while (!endgame) {
                 Graphics g = bs.getDrawGraphics();
                 Graphics2D g2D = (Graphics2D) g;
-                if (spacePressed ==true) {
-                    g2D.drawImage(nitroFlamePNG, 1400, 700, null);
-                }
 
-                // draw track
+                // Draw the track
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
 
+                // Draw the player
+                g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int) (p1.getX() + 0.5),
+                        (int) (p1.getY() + 0.5), null);
 
-                g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int)(p1.getX() + 0.5),
-                        (int)(p1.getY() + 0.5), null);
-
-
-//not working
-
-
-
-//                AffineTransformOp rotation = rotateImageObject(p1);
-//
-//                g2D.drawImage(rotation.filter(nitroFlamePNG, null), (int) p1.getX(), (int) p1.getY(), null);
-
-//                if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-//                    // Show nitro flame at the player's location
-//                    AffineTransformOp rotation = rotateImageObject(p1);
-//                    g2D.drawImage(rotation.filter(nitroFlamePNG, null), (int) p1.getX(), (int) p1.getY(), null);
-//                    System.out.println("FLAME");
-//                }
-
-
-                long currentTime = System.currentTimeMillis();
-                currentLapTime = currentTime - lapStartTime;
-                // Check for a new best lap time
-                if (currentLapTime < bestLapTime) {
-                    bestLapTime = currentLapTime;
+                if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                    try {
+                        player1 = ImageIO.read( new File("res/marioplayerboosting.png") );
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
-//                // Display stopwatch and best lap time in the top right corner
-//                g2D.setColor(Color.BLACK);
-//                g2D.drawString("Time: " + formatTime(currentTime - startTime), WINWIDTH - 150, 20);
-//                g2D.drawString("Best Lap: " + formatTime(bestLapTime), WINWIDTH - 150, 40);
+                System.out.println(p1.getY());
 
-
+                if (!spacePressed) {
+                    try {
+                        player1 = ImageIO.read(new File("res/marioplayer.png"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 
                 g.dispose();
-                g2D.dispose(); // dispose old objects
+                g2D.dispose();
                 bs.show();
 
                 try {
                     Thread.sleep(32);
                 } catch (InterruptedException e) {
-
-
-
+                    e.printStackTrace();
                 }
             }
-
-//            private static String formatTime(long time) {
-//                long seconds = time / 1000;
-//                long milliseconds = time % 1000;
-//                return String.format("%02d:%03d", seconds, milliseconds);
-//            }
-
-
         }
 
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
             return true;
         }
-
     }
+
+
+
+
 
 
 
@@ -299,18 +321,32 @@ public class Racer2D {
 
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-                    maxvelocity = 0.8;
+
+                    maxvelocity = 3;
                 } else {
                     maxvelocity = 3;
                 }
 
 
-
                 if (spacePressed == true && isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack) == false) {
                     //CHEAT
                     // Apply nitro boost when spacebar is pressed
+                    if (upPressed == false) {
+                        if (p1velocity < maxvelocity) {
+                            p1velocity = (p1velocity) + velocitystep;
+                        } else if (p1velocity >= maxvelocity) { // ensure max vel not exceeded
+                            p1velocity = maxvelocity;
+                        }
+                    }
+
                     maxvelocity += nitroBoost;
                     velocitystep = 0.04;
+
+                    double flameX = p1.getX() + (p1.getWidth() / 2.0) - nitroFlamePNGWidth / 2.0;
+                    double flameY = p1.getY() + (p1.getHeight() / 2.0) - nitroFlamePNGHeight / 2.0;
+                    nitroFlameX = flameX;
+                    nitroFlameY = flameY;
+
 
                     System.out.println("BOOOOOOOST");
                 }
@@ -359,24 +395,55 @@ public class Racer2D {
 
                 p1.move(-p1velocity * Math.cos(p1.getAngle() - Math.PI / 2.0),
                         p1velocity * Math.sin(p1.getAngle() - Math.PI / 2.0));
-                p1.screenBounds(XOFFSET, WINWIDTH, YOFFSET, WINHEIGHT);
+                try {
+                    p1.screenBounds(XOFFSET, WINWIDTH, YOFFSET, WINHEIGHT);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
         private double velocitystep, rotatestep, maxvelocity, brakingforce, nitroBoost;
     }
 
-    private static boolean isCollidingWithGrass(double bluecarX, double bluecarY, BufferedImage grass) {
-        int pixelColor = grass.getRGB((int) bluecarX, (int) bluecarY);
 
-        return (pixelColor & 0xFF000000) != 0;
+
+
+
+
+
+
+
+
+
+    private static synchronized boolean isCollidingWithGrass(double bluecarX, double bluecarY, BufferedImage grass) {
+        int x = (int) bluecarX;
+        int y = (int) bluecarY;
+
+        // Check if the coordinates are within bounds
+        if (x >= 0 && x < grass.getWidth() && y >= 0 && y < grass.getHeight()) {
+            int pixelColor = grass.getRGB(x, y);
+            return (pixelColor & 0xFF000000) != 0;
+        }
+
+        // If coordinates are out of bounds, consider it as colliding with grass
+        return true;
     }
+
+
+
+
+
+
+
+
 
     // moveable image objects
     private static class ImageObject {
         private double x, y, xwidth, yheight, angle, internalangle, comX, comY;
         private Vector<Double> coords, triangles;
 
-        public ImageObject() {}
+        public ImageObject() {
+        }
 
         public ImageObject(double xinput, double yinput, double xwidthinput,
                            double yheightinput, double angleinput) {
@@ -389,23 +456,41 @@ public class Racer2D {
             coords = new Vector<Double>();
         }
 
-        public double getX() { return x; }
+        public double getX() {
+            return x;
+        }
 
-        public double getY() { return y; }
+        public double getY() {
+            return y;
+        }
 
-        public double getWidth() { return xwidth; }
+        public double getWidth() {
+            return xwidth;
+        }
 
-        public double getHeight() { return yheight; }
+        public double getHeight() {
+            return yheight;
+        }
 
-        public double getAngle() { return angle; }
+        public double getAngle() {
+            return angle;
+        }
 
-        public double getInternalAngle() { return internalangle; }
+        public double getInternalAngle() {
+            return internalangle;
+        }
 
-        public void setAngle(double angleinput) { angle = angleinput; }
+        public void setAngle(double angleinput) {
+            angle = angleinput;
+        }
 
-        public void setInternalAngle(double input) { internalangle = input; }
+        public void setInternalAngle(double input) {
+            internalangle = input;
+        }
 
-        public Vector<Double> getCoords() { return coords; }
+        public Vector<Double> getCoords() {
+            return coords;
+        }
 
         public void setCoords(Vector<Double> input) {
             coords = input;
@@ -420,12 +505,12 @@ public class Racer2D {
             comX = getComX();
             comY = getComY();
 
-            for (int i=0; i<coords.size(); i=i+2) {
+            for (int i = 0; i < coords.size(); i = i + 2) {
                 triangles.addElement(coords.elementAt(i));
-                triangles.addElement(coords.elementAt(i+1));
+                triangles.addElement(coords.elementAt(i + 1));
 
-                triangles.addElement(coords.elementAt( (i+2) % coords.size() ));
-                triangles.addElement(coords.elementAt( (i+3) % coords.size() ));
+                triangles.addElement(coords.elementAt((i + 2) % coords.size()));
+                triangles.addElement(coords.elementAt((i + 3) % coords.size()));
 
                 triangles.addElement(comX);
                 triangles.addElement(comY);
@@ -433,17 +518,19 @@ public class Racer2D {
         }
 
         public void printTriangles() {
-            for (int i=0; i < triangles.size(); i=i+6) {
-                System.out.print("p0x: " + triangles.elementAt(i) + ", p0y " + triangles.elementAt(i+1));
-                System.out.print(" p1x: " + triangles.elementAt(i+2) + ", p1y: " + triangles.elementAt(i+3));
-                System.out.println(" p2x: " + triangles.elementAt(i+4) + ", p2y: " + triangles.elementAt(i+5));
+            for (int i = 0; i < triangles.size(); i = i + 6) {
+                System.out.print("p0x: " + triangles.elementAt(i) + ", p0y " + triangles.elementAt(i + 1));
+                System.out.print(" p1x: " + triangles.elementAt(i + 2) + ", p1y: " + triangles.elementAt(i + 3));
+                System.out.println(" p2x: " + triangles.elementAt(i + 4) + ", p2y: " + triangles.elementAt(i + 5));
             }
         }
 
         public double getComX() {
             double ret = 0;
             if (coords.size() > 0) {
-                for (int i=0; i<coords.size(); i=i+2) { ret = ret + coords.elementAt(i); }
+                for (int i = 0; i < coords.size(); i = i + 2) {
+                    ret = ret + coords.elementAt(i);
+                }
                 ret = ret / (coords.size() / 2.0);
             }
             return ret;
@@ -452,7 +539,9 @@ public class Racer2D {
         public double getComY() {
             double ret = 0;
             if (coords.size() > 0) {
-                for (int i=1; i<coords.size(); i=i+2) { ret = ret + coords.elementAt(i); }
+                for (int i = 1; i < coords.size(); i = i + 2) {
+                    ret = ret + coords.elementAt(i);
+                }
                 ret = ret / (coords.size() / 2.0);
             }
             return ret;
@@ -468,37 +557,86 @@ public class Racer2D {
             y = yinput;
         }
 
-        public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) {
-            if (x < leftEdge) {
-                moveto(leftEdge, getY());
-                p1velocity = p1velocity*0.9;
+        public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
+            int previousSegment = 1;
+
+            if (previousSegment < 4) {
+                if (x < leftEdge) {
+                    moveto(rightEdge, getY());
+                    p1velocity = p1velocity * 0.9;
+                    System.out.println("Mario is touching left");
+                    previousSegment += 1;
+
+                    OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment4.png"));
+                    OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
+                }
             }
-            if (x + getWidth() > rightEdge) {
-                moveto(rightEdge - getWidth(), getY());
-                p1velocity = p1velocity*0.9;
+
+            if (previousSegment < 2) {
+                if (x + getWidth() > rightEdge) {
+                    moveto(leftEdge - getWidth(), getY());
+                    p1velocity = p1velocity * 0.9;
+                    System.out.println("Mario is touching right");
+                    previousSegment += 1;
+                    System.out.println(bottomEdge);
+                    System.out.println(topEdge);
+                    System.out.println(p1.getY());
+                    System.out.println(getComY());
+                    System.out.println(previousSegment);
+                    OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment2.png"));
+                    OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
+                    System.out.println(previousSegment);
+                }
             }
-            if (y < topEdge) {
-                moveto(getX(), topEdge);
-                p1velocity = p1velocity*0.9;
+
+            if (previousSegment < 5) {
+                if (y < topEdge) {
+                    moveto(getX(), bottomEdge - getHeight());
+                    p1velocity = p1velocity * 0.9;
+                    System.out.println("Mario is touching top");
+                    previousSegment = 1; //reset
+
+                    OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment1.png"));
+                    OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
+                }
             }
-            if (y + getHeight() > bottomEdge) {
-                moveto(getX(), bottomEdge - getHeight());
-                p1velocity = p1velocity*0.9;
+
+            if (previousSegment < 3) {
+                if (y + getHeight() > bottomEdge) {
+                    moveto(getX(), topEdge - getHeight());
+                    p1velocity = p1velocity * 0.9;
+                    System.out.println("Mario is touching bottom");
+                    previousSegment += 1;
+                    OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
+                    OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
+                }
             }
         }
 
-        public void rotate(double input) {
-            angle = angle + input;
-            while (angle > (Math.PI*2)) { angle = angle - (Math.PI*2); }
-            while (angle < 0) { angle = angle + (Math.PI*2); }
+
+        public void rotate ( double input){
+                angle = angle + input;
+                while (angle > (Math.PI * 2)) {
+                    angle = angle - (Math.PI * 2);
+                }
+                while (angle < 0) {
+                    angle = angle + (Math.PI * 2);
+                }
+            }
+
+            public void spin ( double input){
+                internalangle = internalangle + input;
+                while (internalangle > (Math.PI * 2)) {
+                    internalangle = internalangle - (Math.PI * 2);
+                }
+                while (internalangle < 0) {
+                    internalangle = internalangle + (Math.PI * 2);
+                }
+            }
         }
 
-        public void spin(double input) {
-            internalangle = internalangle + input;
-            while (internalangle > (Math.PI*2)) { internalangle = internalangle - (Math.PI*2); }
-            while (internalangle < 0) { internalangle = internalangle + (Math.PI*2); }
-        }
-    }
+
+
 
     // rotates ImageObject
     private static AffineTransformOp rotateImageObject(ImageObject obj) {
@@ -521,6 +659,13 @@ public class Racer2D {
         panel.getActionMap().put(input + " released", new KeyReleased(input));
     }
 
+
+
+
+
+
+
+
     // monitors keypresses
     private static class KeyPressed extends AbstractAction {
         public KeyPressed() { action = ""; }
@@ -539,6 +684,11 @@ public class Racer2D {
         private String action;
     }
 
+
+
+
+
+
     // monitors keyreleases
     private static class KeyReleased extends AbstractAction {
         public KeyReleased() { action = ""; }
@@ -556,6 +706,11 @@ public class Racer2D {
 
         private String action;
     }
+
+
+
+
+
 
     private static class StartGame implements ActionListener {
         private final JPanel panel;
@@ -588,11 +743,24 @@ public class Racer2D {
         }
     }
 
+
+
+
+
+
     private static class QuitGame implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             System.exit(0);
         }
     }
+
+
+
+
+
+
+
+
 
     public static void main(String[] args) {
         setup();
@@ -644,6 +812,9 @@ public class Racer2D {
         else {
             BackgroundMusic menu_theme = new BackgroundMusic("res/Rainbow-Road-Mario-Kart-Wii.wav");
             menu_theme.play();
+
+
+
         }
     }
 
@@ -659,14 +830,15 @@ public class Racer2D {
 
     private static JButton startButton, quitButton;
 
-    private static Color CELESTIAL = new Color(1, 1, 1);
+    private static Color CELESTIAL = new Color(64, 224, 208);
     private static Color HIGHLIGHT = new Color(199, 199, 199);
     private static Color URANIAN = new Color(164, 210, 232);
 
     private static int XOFFSET, YOFFSET, WINWIDTH, WINHEIGHT;
 
+
     private static ImageObject p1, p2; // player1 and player2 racecar object
-    private static double p1width, p1height, p1originalX, p1originalY, p1velocity, nitroFlamePNGWidth, nitroFlamePNGHeight;
+    private static double p1width, p1height, p1originalX, p1originalY, p1velocity, nitroFlamePNGWidth, nitroFlamePNGHeight, nitroFlameX, nitroFlameY;
 
     private static JFrame appFrame;
 
