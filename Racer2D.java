@@ -59,7 +59,7 @@ public class Racer2D {
     }
 
     public static void setup() {
-        appFrame = new JFrame("Scuffed Rainbow Road");
+        appFrame = new JFrame("Scuffed Rainbow RoaD");
         XOFFSET = 0;
         YOFFSET = 0;
         WINWIDTH = 1280; //500    2000
@@ -294,7 +294,9 @@ public class Racer2D {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+
                 }
+
 
 
 
@@ -302,7 +304,7 @@ public class Racer2D {
                 g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
                         (int) (p2.getY2() + 0.5), null);
 
-                if (shiftPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                if (qPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
                         player2 = ImageIO.read( new File("res/marioplayerboosting.png") );
                     } catch (IOException e) {
@@ -311,7 +313,7 @@ public class Racer2D {
                 }
                 System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
 
-                if (!shiftPressed) {
+                if (!qPressed) {
                     try {
                         player2 = ImageIO.read(new File("res/luigiplayer.png"));
                     } catch (IOException e) {
@@ -409,7 +411,7 @@ public class Racer2D {
 
                 if (spacePressed == true && isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack) == false) {
                     //CHEAT
-                    // Apply nitro boost when spacebar is pressed
+                    // NITRO
                     if (upPressed == false) {
                         if (p1velocity < p1maxvelocity) {
                             p1velocity = (p1velocity) + p1velocitystep;
@@ -487,6 +489,7 @@ public class Racer2D {
     }
 
 
+    // thread responsible for updating player movement
     private static class PlayerMoverplayer2 implements Runnable {
         public PlayerMoverplayer2() {
             p2velocitystep = 0.02; // aka accel
@@ -537,10 +540,10 @@ public class Racer2D {
                 }
 
 
-                if (shiftPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
+                if (qPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
                     //CHEAT
-                    // Apply nitro boost when shift is pressed
-                    if (shiftPressed == false) {
+                    // NITRO
+                    if (wPressed == false) {
                         if (p2velocity < p2maxvelocity) {
                             p2velocity = (p2velocity) + p2velocitystep;
                         } else if (p2velocity >= p2maxvelocity) { // ensure max vel not exceeded
@@ -571,7 +574,7 @@ public class Racer2D {
                     }
                 }
                 if (sPressed == true) {
-                    System.out.println("s IS BEING PRESSED");
+                    System.out.println("down IS BEING PRESSED");
 
                     if (p2velocity < -1) { // ensure max rev speed
                         p2velocity = -1;
@@ -595,7 +598,7 @@ public class Racer2D {
                 }
 
                 // apply drag force
-                if (!wPressed && !sPressed && !aPressed && !dPressed && !shiftPressed
+                if (!wPressed && !sPressed && !aPressed && !dPressed && !qPressed
                         && p2velocity != 0) {
                     if ((p2velocity - 0.1) < 0) {
                         p2velocity = 0;
@@ -783,14 +786,13 @@ public class Racer2D {
         int currentSegment = 5;
         public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
 
-            if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                 currentSegment = 5;
             }
 
-
             if (currentSegment == 5 && x + getWidth() > rightEdge) {
                     moveto((leftEdge+50) - getWidth(), getY());
-                    p2velocity = p2velocity * 0.9;
+                    p1velocity = p1velocity * 0.9;
                     System.out.println("Mario is touching right");
                     currentSegment = 10;
 
@@ -803,7 +805,7 @@ public class Racer2D {
 
             if (currentSegment == 10 && y + getHeight() > bottomEdge) {
                 moveto(getX(), topEdge+50);
-                p2velocity = p2velocity * 0.9;
+                p1velocity = p1velocity * 0.9;
                 System.out.println("Mario is touching bottom");
                 currentSegment = 15;  // Reset to segment 1
                 OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
@@ -814,7 +816,7 @@ public class Racer2D {
 
             if (currentSegment == 15 && x < leftEdge+20) {
                     moveto(rightEdge-50, getY());
-                    p2velocity = p2velocity * 0.9;
+                    p1velocity = p1velocity * 0.9;
                     System.out.println("Mario is touching left");
                     currentSegment = 20;
 
@@ -825,7 +827,7 @@ public class Racer2D {
 
             if (currentSegment == 20 && y < topEdge+20) {
                     moveto(getX(), (bottomEdge-10) - getHeight());
-                    p2velocity = p2velocity * 0.9;
+                    p1velocity = p1velocity * 0.9;
                     System.out.println("Mario is touching top");
                     currentSegment = 5;
 
@@ -834,7 +836,7 @@ public class Racer2D {
                 }
 
             // Reset currentSegment to 5 when respawned
-            if (p2.getX2() == RESPAWN_X && p2.getY2() == RESPAWN_Y) {
+            if (p1.getX() == RESPAWN_X && p1.getY() == RESPAWN_Y) {
                 currentSegment = 5;
             }
 
@@ -996,7 +998,7 @@ public class Racer2D {
             if (currentSegment == 5 && x2 + getWidth2() > rightEdge) {
                 moveto2((leftEdge+50) - getWidth2(), getY2());
                 p2velocity = p2velocity * 0.9;
-                System.out.println("Mario is touching right");
+                System.out.println("luigi is touching right");
                 currentSegment = 10;
 
                 OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment2.png"));
@@ -1009,7 +1011,7 @@ public class Racer2D {
             if (currentSegment == 10 && y2 + getHeight2() > bottomEdge) {
                 moveto2(getX2(), topEdge+50);
                 p2velocity = p2velocity * 0.9;
-                System.out.println("Mario is touching bottom");
+                System.out.println("luigi is touching bottom");
                 currentSegment = 15;  // Reset to segment 1
                 OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
                 OffTrack = ImageIO.read(new File("res/largerrainbowroadspace3.png"));
@@ -1020,7 +1022,7 @@ public class Racer2D {
             if (currentSegment == 15 && x2 < leftEdge+20) {
                 moveto2(rightEdge-50, getY2());
                 p2velocity = p2velocity * 0.9;
-                System.out.println("Mario is touching left");
+                System.out.println("luigi is touching left");
                 currentSegment = 20;
 
                 OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment4.png"));
@@ -1079,11 +1081,11 @@ public class Racer2D {
     }
 
     // rotates ImageObject
-    private static AffineTransformOp rotateImageObject2(ImageObject2 obj) {
+    private static AffineTransformOp rotateImageObject2(ImageObject2 obj2) {
         AffineTransform at = new AffineTransform();
-        at.translate(obj.getWidth2() / 2.0, obj.getHeight2() / 2.0);
-        at.rotate(-obj.getAngle2());
-        at.translate(-obj.getWidth2() / 2.0, -obj.getHeight2() / 2.0);
+        at.translate(obj2.getWidth2() / 2.0, obj2.getHeight2() / 2.0);
+        at.rotate(-obj2.getAngle2());
+        at.translate(-obj2.getWidth2() / 2.0, -obj2.getHeight2() / 2.0);
         return new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
     }
 
@@ -1092,11 +1094,11 @@ public class Racer2D {
 
     // initiates key actions from panel key responses
     private static void bindKey(JPanel panel, String input) {
-        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("pressed " + input), input + " pressed");
-        panel.getActionMap().put(input + " pressed", new KeyPressed(input));
+        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("pressed " + input), input + " presseD");
+        panel.getActionMap().put(input + " presseD", new KeyPressed(input));
 
-        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("released " + input), input + " released");
-        panel.getActionMap().put(input + " released", new KeyReleased(input));
+        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("released " + input), input + " releaseD");
+        panel.getActionMap().put(input + " releaseD", new KeyReleased(input));
     }
 
 
@@ -1120,7 +1122,7 @@ public class Racer2D {
             if (action.equals("S")) { sPressed = true; }
             if (action.equals("A")) { aPressed = true; }
             if (action.equals("D")) { dPressed = true; }
-            if (action.equals("SHIFT")) { shiftPressed = true; }
+            if (action.equals("Q")) { qPressed = true; }
 
         }
 
@@ -1149,7 +1151,9 @@ public class Racer2D {
             if (action.equals("S")) { sPressed = false; }
             if (action.equals("A")) { aPressed = false; }
             if (action.equals("D")) { dPressed = false; }
-            if (action.equals("SHIFT")) { shiftPressed = false; }
+            if (action.equals("Q")) { qPressed = false; }
+
+
 
         }
 
@@ -1183,7 +1187,7 @@ public class Racer2D {
             sPressed = false;
             aPressed = false;
             dPressed = false;
-            shiftPressed = false;
+            qPressed = false;
 
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 4.7);
             p1velocity = 0.0;
@@ -1258,11 +1262,12 @@ public class Racer2D {
         bindKey(myPanel, "LEFT");
         bindKey(myPanel, "RIGHT");
         bindKey(myPanel, "SPACE");
+
         bindKey(myPanel, "W");
         bindKey(myPanel, "S");
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
-        bindKey(myPanel, "SHIFT");
+        bindKey(myPanel, "Q");
 
 
 
@@ -1320,7 +1325,7 @@ public class Racer2D {
 
 
     private static Boolean endgame;
-    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, shiftPressed;
+    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, qPressed;
 
     private static JButton startButton, quitButton;
 
