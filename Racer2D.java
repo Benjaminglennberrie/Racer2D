@@ -59,7 +59,7 @@ public class Racer2D {
     }
 
     public static void setup() {
-        appFrame = new JFrame("Scuffed Rainbow RoaD");
+        appFrame = new JFrame("Scuffed Rainbow Road");
         XOFFSET = 0;
         YOFFSET = 0;
         WINWIDTH = 1280; //500    2000
@@ -1094,11 +1094,11 @@ public class Racer2D {
 
     // initiates key actions from panel key responses
     private static void bindKey(JPanel panel, String input) {
-        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("pressed " + input), input + " presseD");
-        panel.getActionMap().put(input + " presseD", new KeyPressed(input));
+        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("pressed " + input), input + " pressed");
+        panel.getActionMap().put(input + " pressed", new KeyPressed(input));
 
-        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("released " + input), input + " releaseD");
-        panel.getActionMap().put(input + " releaseD", new KeyReleased(input));
+        panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("released " + input), input + " released");
+        panel.getActionMap().put(input + " released", new KeyReleased(input));
     }
 
 
@@ -1257,17 +1257,24 @@ public class Racer2D {
         setButtonAppearance(quitButton);
         myPanel.add(quitButton, gbc);
 
-        bindKey(myPanel, "UP");
-        bindKey(myPanel, "DOWN");
-        bindKey(myPanel, "LEFT");
-        bindKey(myPanel, "RIGHT");
-        bindKey(myPanel, "SPACE");
+
+
+
 
         bindKey(myPanel, "W");
         bindKey(myPanel, "S");
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
         bindKey(myPanel, "Q");
+
+
+        bindKey(myPanel, "UP");
+        bindKey(myPanel, "DOWN");
+        bindKey(myPanel, "LEFT");
+        bindKey(myPanel, "RIGHT");
+        bindKey(myPanel, "SPACE");
+
+
 
 
 
