@@ -304,7 +304,7 @@ public class Racer2D {
                 g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
                         (int) (p2.getY2() + 0.5), null);
 
-                if (qPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
                         player2 = ImageIO.read( new File("res/marioplayerboosting.png") );
                     } catch (IOException e) {
@@ -313,7 +313,7 @@ public class Racer2D {
                 }
                 System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
 
-                if (!qPressed) {
+                if (!tabPressed) {
                     try {
                         player2 = ImageIO.read(new File("res/luigiplayer.png"));
                     } catch (IOException e) {
@@ -540,7 +540,7 @@ public class Racer2D {
                 }
 
 
-                if (qPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
+                if (tabPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
                     //CHEAT
                     // NITRO
                     if (wPressed == false) {
@@ -550,18 +550,8 @@ public class Racer2D {
                             p2velocity = p2maxvelocity;
                         }
                     }
-
-
-
                     p2maxvelocity += p2nitroBoost;
                     p2velocitystep = 0.04;
-
-                    double flameX = p2.getX2() + (p2.getWidth2() / 2.0) - nitroFlamePNGWidth / 2.0;
-                    double flameY = p2.getY2() + (p2.getHeight2() / 2.0) - nitroFlamePNGHeight / 2.0;
-                    nitroFlameX = flameX;
-                    nitroFlameY = flameY;
-
-
                     System.out.println("BOOOOOOOST");
                 }
 
@@ -582,13 +572,10 @@ public class Racer2D {
                         p2velocity = p2velocity - p2brakingforce;
                     }
                 }
-                if (aPressed == true) {
-                    if (p2velocity < 0) {
-                        p2.rotate2(-p2rotatestep);
-                    } else {
-                        p2.rotate2(p2rotatestep);
-                    }
-                }
+
+
+
+
                 if (dPressed == true) {
                     if (p2velocity < 0) {
                         p2.rotate2(p2rotatestep);
@@ -596,9 +583,16 @@ public class Racer2D {
                         p2.rotate2(-p2rotatestep);
                     }
                 }
-
+                if (aPressed == true) {
+                    if (p2velocity < 0) {
+                        p2.rotate2(-p2rotatestep);
+                    } else {
+                        System.out.println("TURN LEFTTTT!!!!!!!!!");
+                        p2.rotate2(p2rotatestep);
+                    }
+                }
                 // apply drag force
-                if (!wPressed && !sPressed && !aPressed && !dPressed && !qPressed
+                if (!wPressed && !sPressed && !aPressed && !dPressed && !tabPressed
                         && p2velocity != 0) {
                     if ((p2velocity - 0.1) < 0) {
                         p2velocity = 0;
@@ -1122,7 +1116,7 @@ public class Racer2D {
             if (action.equals("S")) { sPressed = true; }
             if (action.equals("A")) { aPressed = true; }
             if (action.equals("D")) { dPressed = true; }
-            if (action.equals("Q")) { qPressed = true; }
+            if (action.equals("TAB")) { tabPressed = true; }
 
         }
 
@@ -1151,7 +1145,7 @@ public class Racer2D {
             if (action.equals("S")) { sPressed = false; }
             if (action.equals("A")) { aPressed = false; }
             if (action.equals("D")) { dPressed = false; }
-            if (action.equals("Q")) { qPressed = false; }
+            if (action.equals("TAB")) { tabPressed = false; }
 
 
 
@@ -1187,7 +1181,7 @@ public class Racer2D {
             sPressed = false;
             aPressed = false;
             dPressed = false;
-            qPressed = false;
+            tabPressed = false;
 
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 4.7);
             p1velocity = 0.0;
@@ -1265,7 +1259,7 @@ public class Racer2D {
         bindKey(myPanel, "S");
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
-        bindKey(myPanel, "Q");
+        bindKey(myPanel, "TAB");
 
 
         bindKey(myPanel, "UP");
@@ -1332,7 +1326,7 @@ public class Racer2D {
 
 
     private static Boolean endgame;
-    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, qPressed;
+    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, tabPressed;
 
     private static JButton startButton, quitButton;
 
