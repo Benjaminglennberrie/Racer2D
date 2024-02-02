@@ -22,7 +22,6 @@ import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import java.awt.geom.AffineTransform;
@@ -31,7 +30,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.event.*;
 
@@ -44,17 +42,17 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 
-public class Racer2D {
+public class RainbowRoadSinglePlayer {
     private static Speedometer speedometer; // Make it static
     private static int currentSegment = 5;
 
 
-    public Racer2D() {
+    public RainbowRoadSinglePlayer() {
 
 
 
 
-        Racer2D.setup();
+        src.src.RainbowRoadSinglePlayer.setup();
 
     }
 
@@ -259,6 +257,7 @@ public class Racer2D {
 
 
     private static class Animate implements Runnable, ImageObserver {
+        int i = 0;
         public void run() {
             bs = appFrame.getBufferStrategy();
             if (bs == null) {
@@ -272,6 +271,18 @@ public class Racer2D {
                 // Draw the track
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
+
+
+                double speedShown = Math.round(p1velocity * 1000.0) / 1000.0;
+//                int LapCounter
+
+                g2D.setColor(Color.LIGHT_GRAY);
+
+                g2D.setFont(new Font("Arial", Font.PLAIN, 10));
+
+                g2D.drawString("Velocity: " + (speedShown*10), 50, 50);
+                g2D.drawString("Lap Counter " + (333), 150, 50);
+
 
                 // Draw the player
                 g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int) (p1.getX() + 0.5),
@@ -287,6 +298,19 @@ public class Racer2D {
                     }
                 }
                 System.out.println("Coords:" + p1.x + "  " + p1.y);
+
+
+// RESPAWN PROGRAMMING
+                i += 1;
+                if (i==5 && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                    RESPAWN_X = p1.x;
+                    RESPAWN_Y = p1.y;
+                    i = 0;
+                    System.out.println("   \nSpawn Reset\n   ");
+                }
+                if (i==5) {
+                    i=0;
+                }
 
                 if (!spacePressed) {
                     try {
@@ -306,7 +330,7 @@ public class Racer2D {
 
                 if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
-                        player2 = ImageIO.read( new File("res/marioplayerboosting.png") );
+                        player2 = ImageIO.read( new File("res/luigiplayerboosting.png") );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -378,26 +402,29 @@ public class Racer2D {
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(4);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-                    try {
-                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+//                    try {
+//                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    try {
+//                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+
 
                     p1.moveto(RESPAWN_X,RESPAWN_Y);
-                    p1.setAngle(4.8);
 
-                    currentSegment = 5;
+
+//                    p1.setAngle(4.8);
+
+//                    currentSegment = 5;
                     p1velocity = 0.0;
 
 
@@ -514,21 +541,21 @@ public class Racer2D {
                         throw new RuntimeException(e);
                     }
 
-                    try {
-                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+//                    try {
+//                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    try {
+//                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
                     p2.moveto2(RESPAWN_X2,RESPAWN_Y2);
                     p2.setAngle2(4.8);
 
-                    currentSegment = 5;
+//                    currentSegment = 5;
                     p2velocity = 0.0;
 
 
@@ -780,9 +807,9 @@ public class Racer2D {
         int currentSegment = 5;
         public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
 
-            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-                currentSegment = 5;
-            }
+//            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+//                currentSegment = 5;
+//            }
 
             if (currentSegment == 5 && x + getWidth() > rightEdge) {
                     moveto((leftEdge+50) - getWidth(), getY());
@@ -1223,7 +1250,7 @@ public class Racer2D {
     public static void main(String[] args){
         setup();
 
-        Racer2D racer2D = new Racer2D();
+        src.src.RainbowRoadSinglePlayer racer2D = new src.src.RainbowRoadSinglePlayer();
         racer2D.setup();
         racer2D.speedometer = new Speedometer(20, 20);
 
@@ -1349,8 +1376,8 @@ public class Racer2D {
     private static JFrame appFrame;
 
     private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
-    private static final double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
-    private static final double RESPAWN_Y = 343.13283518037696; // Set the appropriate y-coordinate
+    private static double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y = 343.13283518037696; // Set the appropriate y-coordinate
 
     private static final double RESPAWN_X2 = 956.1883469051929 ; // Set the appropriate x-coordinate
     private static final double RESPAWN_Y2 = 343.13283518037696; // Set the appropriate y-coordinate

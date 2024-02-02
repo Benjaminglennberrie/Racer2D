@@ -38,7 +38,7 @@ public class CourseSelectionFrame extends JFrame {
         SwingUtilities.invokeLater(() -> {
             try {
                 // Run the Racer2D class using reflection
-                Class<?> racer2DClass = Class.forName("src.src.Racer2D");
+                Class<?> racer2DClass = Class.forName("src.src.RainbowRoadSinglePlayer");
                 racer2DClass.getMethod("main", String[].class).invoke(null, (Object) null);
             } catch (Exception e) {
                 e.printStackTrace();
