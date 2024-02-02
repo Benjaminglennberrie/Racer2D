@@ -22,7 +22,6 @@ import java.io.File;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import java.awt.geom.AffineTransform;
@@ -31,7 +30,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Color;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.event.*;
 
@@ -54,7 +52,7 @@ public class MushroomGorge {
 
 
 
-        MushroomGorge.setup();
+        src.src.RainbowRoad.setup();
 
     }
 
@@ -88,19 +86,19 @@ public class MushroomGorge {
 
         try { // IO
 //            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\bluecar1.png") );
-            player1 = ImageIO.read( new File("res/marioplayer.png") );
+            player1 = ImageIO.read( new File("res/RainbowRoad/marioplayer.png") );
 
-//            player2 = ImageIO.read( new File("res/luigiplayer.png"));
-
-
-//            nitroFlamePNG = ImageIO.read( new File("res/nitroboostflame.png") );
+            player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayer.png"));
 
 
+            nitroFlamePNG = ImageIO.read( new File("res/RainbowRoad/nitroboostflame.png") );
 
-            OnTrack = ImageIO.read( new File("res/largerrainbowroadSegment1.png") );
+
+
+            OnTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroad.png") );
 //            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            OffTrack = ImageIO.read( new File("res/largerrainbowroadspace.png") );
+            OffTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadspace.png") );
 //            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
         } catch (IOException e) {
@@ -111,7 +109,7 @@ public class MushroomGorge {
 
 
     public static class BackgroundMusic implements Runnable {
-        private String file = "res/Rainbow-Road-Mario-Kart-Wii.wav";
+        private String file = "res/RainbowRoad/Rainbow-Road-Mario-Kart-Wii.wav";
 
 
         public BackgroundMusic(String file) {
@@ -259,6 +257,7 @@ public class MushroomGorge {
 
 
     private static class Animate implements Runnable, ImageObserver {
+        int i = 0;
         public void run() {
             bs = appFrame.getBufferStrategy();
             if (bs == null) {
@@ -273,6 +272,18 @@ public class MushroomGorge {
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
 
+
+                double speedShown = Math.round(p1velocity * 1000.0) / 1000.0;
+//                int LapCounter
+
+                g2D.setColor(Color.LIGHT_GRAY);
+
+                g2D.setFont(new Font("Arial", Font.PLAIN, 10));
+
+                g2D.drawString("Velocity: " + (speedShown*10), 50, 50);
+                g2D.drawString("Lap Counter " + (333), 150, 50);
+
+
                 // Draw the player
                 g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int) (p1.getX() + 0.5),
                         (int) (p1.getY() + 0.5), null);
@@ -281,16 +292,29 @@ public class MushroomGorge {
 
                 if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        player1 = ImageIO.read( new File("res/marioplayerboosting.png") );
+                        player1 = ImageIO.read( new File("res/RainbowRoad/marioplayerboosting.png") );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 System.out.println("Coords:" + p1.x + "  " + p1.y);
 
+
+// RESPAWN PROGRAMMING
+                i += 1;
+                if (i==5 && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                    RESPAWN_X = p1.x;
+                    RESPAWN_Y = p1.y;
+                    i = 0;
+                    System.out.println("   \nSpawn Reset\n   ");
+                }
+                if (i==5) {
+                    i=0;
+                }
+
                 if (!spacePressed) {
                     try {
-                        player1 = ImageIO.read(new File("res/marioplayer.png"));
+                        player1 = ImageIO.read(new File("res/RainbowRoad/marioplayer.png"));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -301,26 +325,26 @@ public class MushroomGorge {
 
 
 
-//                g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
-//                        (int) (p2.getY2() + 0.5), null);
-//
-//                if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
-//                    try {
-//                        player2 = ImageIO.read( new File("res/marioplayerboosting.png") );
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
-//
-//                if (!tabPressed) {
-//                    try {
-//                        player2 = ImageIO.read(new File("res/luigiplayer.png"));
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//
+                g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
+                        (int) (p2.getY2() + 0.5), null);
+
+                if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                    try {
+                        player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayerboosting.png") );
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
+
+                if (!tabPressed) {
+                    try {
+                        player2 = ImageIO.read(new File("res/RainbowRoad/luigiplayer.png"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
 
 
 
@@ -378,26 +402,29 @@ public class MushroomGorge {
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(4);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-                    try {
-                        OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment1.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+//                    try {
+//                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    try {
+//                        OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+
 
                     p1.moveto(RESPAWN_X,RESPAWN_Y);
-                    p1.setAngle(4.8);
 
-                    currentSegment = 5;
+
+//                    p1.setAngle(4.8);
+
+//                    currentSegment = 5;
                     p1velocity = 0.0;
 
 
@@ -490,128 +517,128 @@ public class MushroomGorge {
 
 
     // thread responsible for updating player movement
-//    private static class PlayerMoverplayer2 implements Runnable {
-//        public PlayerMoverplayer2() {
-//            p2velocitystep = 0.02; // aka accel
-//            p2rotatestep = 0.03; //0.03
-//            p2maxvelocity = 5;
-//            p2brakingforce = 0.04;
-//            p2nitroBoost = 4;
-//
-//        }
-//
-//        public void run() {
-//            while (!endgame) {
-//                try {
-//                    Thread.sleep(9);
-//                } catch (InterruptedException e) { }
-//
-//
-//                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+    private static class PlayerMoverplayer2 implements Runnable {
+        public PlayerMoverplayer2() {
+            p2velocitystep = 0.02; // aka accel
+            p2rotatestep = 0.03; //0.03
+            p2maxvelocity = 5;
+            p2brakingforce = 0.04;
+            p2nitroBoost = 4;
+
+        }
+
+        public void run() {
+            while (!endgame) {
+                try {
+                    Thread.sleep(9);
+                } catch (InterruptedException e) { }
+
+
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
 //                    try {
-//                        Thread.sleep(2000);
-//                    } catch (InterruptedException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//
-//                    try {
-//                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
+//                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
 //                    } catch (IOException e) {
 //                        throw new RuntimeException(e);
 //                    }
 //                    try {
-//                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace1.png"));
+//                        OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace.png"));
 //                    } catch (IOException e) {
 //                        throw new RuntimeException(e);
 //                    }
-//
-//                    p2.moveto2(RESPAWN_X2,RESPAWN_Y2);
-//                    p2.setAngle2(4.8);
-//
+
+                    p2.moveto2(RESPAWN_X2,RESPAWN_Y2);
+                    p2.setAngle2(4.8);
+
 //                    currentSegment = 5;
-//                    p2velocity = 0.0;
-//
-//
-//
-//                } else {
-//                    p2maxvelocity = 3;
-//                    p2velocitystep = 0.02; // aka accel
-//
-//                }
-//
-//
-//                if (tabPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
-//                    //CHEAT
-//                    // NITRO
-//                    if (wPressed == false) {
-//                        if (p2velocity < p2maxvelocity) {
-//                            p2velocity = (p2velocity) + p2velocitystep;
-//                        } else if (p2velocity >= p2maxvelocity) { // ensure max vel not exceeded
-//                            p2velocity = p2maxvelocity;
-//                        }
-//                    }
-//                    p2maxvelocity += p2nitroBoost;
-//                    p2velocitystep = 0.04;
-//                    System.out.println("BOOOOOOOST");
-//                }
-//
-//
-//                if (wPressed == true) {
-//                    if (p2velocity < p2maxvelocity) {
-//                        p2velocity = (p2velocity) + p2velocitystep;
-//                    } else if (p2velocity >= p2maxvelocity) { // ensure max vel not exceeded
-//                        p2velocity = p2maxvelocity;
-//                    }
-//                }
-//                if (sPressed == true) {
-//                    System.out.println("down IS BEING PRESSED");
-//
-//                    if (p2velocity < -1) { // ensure max rev speed
-//                        p2velocity = -1;
-//                    } else {
-//                        p2velocity = p2velocity - p2brakingforce;
-//                    }
-//                }
-//
-//
-//
-//
-//                if (dPressed == true) {
-//                    if (p2velocity < 0) {
-//                        p2.rotate2(p2rotatestep);
-//                    } else {
-//                        p2.rotate2(-p2rotatestep);
-//                    }
-//                }
-//                if (aPressed == true) {
-//                    if (p2velocity < 0) {
-//                        p2.rotate2(-p2rotatestep);
-//                    } else {
-//                        System.out.println("TURN LEFTTTT!!!!!!!!!");
-//                        p2.rotate2(p2rotatestep);
-//                    }
-//                }
-//                // apply drag force
-//                if (!wPressed && !sPressed && !aPressed && !dPressed && !tabPressed
-//                        && p2velocity != 0) {
-//                    if ((p2velocity - 0.1) < 0) {
-//                        p2velocity = 0;
-//                    } else {
-//                        p2velocity = p2velocity - 0.04;
-//                    }
-//                }
-//
-//                p2.move2(-p2velocity * Math.cos(p2.getAngle2() - Math.PI / 2.0),
-//                        p2velocity * Math.sin(p2.getAngle2() - Math.PI / 2.0));
-//                try {
-//                    p2.screenBounds(XOFFSET, WINWIDTH, YOFFSET, WINHEIGHT);
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        }
-//        private double p2velocitystep, p2rotatestep, p2maxvelocity, p2brakingforce, p2nitroBoost;
-//    }
+                    p2velocity = 0.0;
+
+
+
+                } else {
+                    p2maxvelocity = 3;
+                    p2velocitystep = 0.02; // aka accel
+
+                }
+
+
+                if (tabPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
+                    //CHEAT
+                    // NITRO
+                    if (wPressed == false) {
+                        if (p2velocity < p2maxvelocity) {
+                            p2velocity = (p2velocity) + p2velocitystep;
+                        } else if (p2velocity >= p2maxvelocity) { // ensure max vel not exceeded
+                            p2velocity = p2maxvelocity;
+                        }
+                    }
+                    p2maxvelocity += p2nitroBoost;
+                    p2velocitystep = 0.04;
+                    System.out.println("BOOOOOOOST");
+                }
+
+
+                if (wPressed == true) {
+                    if (p2velocity < p2maxvelocity) {
+                        p2velocity = (p2velocity) + p2velocitystep;
+                    } else if (p2velocity >= p2maxvelocity) { // ensure max vel not exceeded
+                        p2velocity = p2maxvelocity;
+                    }
+                }
+                if (sPressed == true) {
+                    System.out.println("down IS BEING PRESSED");
+
+                    if (p2velocity < -1) { // ensure max rev speed
+                        p2velocity = -1;
+                    } else {
+                        p2velocity = p2velocity - p2brakingforce;
+                    }
+                }
+
+
+
+
+                if (dPressed == true) {
+                    if (p2velocity < 0) {
+                        p2.rotate2(p2rotatestep);
+                    } else {
+                        p2.rotate2(-p2rotatestep);
+                    }
+                }
+                if (aPressed == true) {
+                    if (p2velocity < 0) {
+                        p2.rotate2(-p2rotatestep);
+                    } else {
+                        System.out.println("TURN LEFTTTT!!!!!!!!!");
+                        p2.rotate2(p2rotatestep);
+                    }
+                }
+                // apply drag force
+                if (!wPressed && !sPressed && !aPressed && !dPressed && !tabPressed
+                        && p2velocity != 0) {
+                    if ((p2velocity - 0.1) < 0) {
+                        p2velocity = 0;
+                    } else {
+                        p2velocity = p2velocity - 0.04;
+                    }
+                }
+
+                p2.move2(-p2velocity * Math.cos(p2.getAngle2() - Math.PI / 2.0),
+                        p2velocity * Math.sin(p2.getAngle2() - Math.PI / 2.0));
+                try {
+                    p2.screenBounds(XOFFSET, WINWIDTH, YOFFSET, WINHEIGHT);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        private double p2velocitystep, p2rotatestep, p2maxvelocity, p2brakingforce, p2nitroBoost;
+    }
 
 
 
@@ -635,11 +662,11 @@ public class MushroomGorge {
             return (pixelColor & 0xFF000000) != 0;
         }
 
-//        // Check if the coordinates are within bounds
-//        if (x2 >= 0 && x2 < grass.getWidth() && y2 >= 0 && y2 < grass.getHeight()) {
-//            int pixelColor = grass.getRGB(x, y);
-//            return (pixelColor & 0xFF000000) != 0;
-//        }
+        // Check if the coordinates are within bounds
+        if (x2 >= 0 && x2 < grass.getWidth() && y2 >= 0 && y2 < grass.getHeight()) {
+            int pixelColor = grass.getRGB(x, y);
+            return (pixelColor & 0xFF000000) != 0;
+        }
 
 
 
@@ -780,9 +807,9 @@ public class MushroomGorge {
         int currentSegment = 5;
         public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
 
-            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-                currentSegment = 5;
-            }
+//            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+//                currentSegment = 5;
+//            }
 
             if (currentSegment == 5 && x + getWidth() > rightEdge) {
                 moveto((leftEdge+50) - getWidth(), getY());
@@ -790,8 +817,8 @@ public class MushroomGorge {
                 System.out.println("Mario is touching right");
                 currentSegment = 10;
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment2.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace2.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment2.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace2.png"));
 
 
             }
@@ -802,8 +829,8 @@ public class MushroomGorge {
                 p1velocity = p1velocity * 0.9;
                 System.out.println("Mario is touching bottom");
                 currentSegment = 15;  // Reset to segment 1
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace3.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment3.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace3.png"));
                 System.out.println(currentSegment);
             }
 
@@ -814,8 +841,8 @@ public class MushroomGorge {
                 System.out.println("Mario is touching left");
                 currentSegment = 20;
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment4.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace4.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment4.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace4.png"));
             }
 
 
@@ -825,8 +852,8 @@ public class MushroomGorge {
                 System.out.println("Mario is touching top");
                 currentSegment = 5;
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace1.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace1.png"));
             }
 
             // Reset currentSegment to 5 when respawned
@@ -860,212 +887,212 @@ public class MushroomGorge {
     }
 
     // moveable image objects
-//    private static class ImageObject2 {
-//        private double x2, y2, x2width, y2height, angle2, internalangle2, comX2, comY2;
-//        private Vector<Double> coords2, triangles2;
-//
-//        public ImageObject2() {
-//        }
-//
-//        public ImageObject2(double x2input, double y2input, double x2widthinput,
-//                            double y2heightinput, double angleinput2) {
-//            x2 = x2input;
-//            y2 = y2input;
-//            x2width = x2widthinput;
-//            y2height = y2heightinput;
-//            angle2 = angleinput2;
-//            internalangle2 = 0.0;
-//            coords2 = new Vector<Double>();
-//        }
-//
-//        public double getX2() {
-//            return x2;
-//        }
-//
-//        public double getY2() {
-//            return y2;
-//        }
-//
-//        public double getWidth2() {
-//            return x2width;
-//        }
-//
-//        public double getHeight2() {
-//            return y2height;
-//        }
-//
-//        public double getAngle2() {
-//            return angle2;
-//        }
-//
-//        public double getInternalAngle2() {
-//            return internalangle2;
-//        }
-//
-//        public void setAngle2(double angleinput2) {
-//            angle2 = angleinput2;
-//        }
-//
-//        public void setInternalAngle2(double input2) {
-//            internalangle2 = input2;
-//        }
-//
-//        public Vector<Double> getCoords2() {
-//            return coords2;
-//        }
-//
-//        public void setCoords2(Vector<Double> input2) {
-//            coords2 = input2;
-//            generateTriangles2();
-//        }
-//
-//        public void generateTriangles2() {
-//            triangles2 = new Vector<Double>();
-//            // format: (0, 1), (2, 3), (4, 5) is x,y coords of triangle
-//
-//            // get center point of all coords
-//            comX2 = getComX2();
-//            comY2 = getComY2();
-//
-//            for (int i = 0; i < coords2.size(); i = i + 2) {
-//                triangles2.addElement(coords2.elementAt(i));
-//                triangles2.addElement(coords2.elementAt(i + 1));
-//
-//                triangles2.addElement(coords2.elementAt((i + 2) % coords2.size()));
-//                triangles2.addElement(coords2.elementAt((i + 3) % coords2.size()));
-//
-//                triangles2.addElement(comX2);
-//                triangles2.addElement(comY2);
-//            }
-//        }
-//
-//        public void printTriangles2() {
-//            for (int i = 0; i < triangles2.size(); i = i + 6) {
-//                System.out.print("p0x: " + triangles2.elementAt(i) + ", p0y " + triangles2.elementAt(i + 1));
-//                System.out.print(" p1x: " + triangles2.elementAt(i + 2) + ", p1y: " + triangles2.elementAt(i + 3));
-//                System.out.println(" p2x: " + triangles2.elementAt(i + 4) + ", p2y: " + triangles2.elementAt(i + 5));
-//            }
-//        }
-//
-//        public double getComX2() {
-//            double ret = 0;
-//            if (coords2.size() > 0) {
-//                for (int i = 0; i < coords2.size(); i = i + 2) {
-//                    ret = ret + coords2.elementAt(i);
-//                }
-//                ret = ret / (coords2.size() / 2.0);
-//            }
-//            return ret;
-//        }
-//
-//        public double getComY2() {
-//            double ret = 0;
-//            if (coords2.size() > 0) {
-//                for (int i = 1; i < coords2.size(); i = i + 2) {
-//                    ret = ret + coords2.elementAt(i);
-//                }
-//                ret = ret / (coords2.size() / 2.0);
-//            }
-//            return ret;
-//        }
-//
-//        public void move2(double x2input, double y2input) {
-//            x2 = x2 + x2input;
-//            y2 = y2 + y2input;
-//        }
-//
-//        public void moveto2(double x2input, double y2input) {
-//            x2 = x2input;
-//            y2= y2input;
-//        }
-//
-//
-//
-//        int currentSegment = 5;
-//        public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
-//
-//            if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
-//                currentSegment = 5;
-//            }
-//
-//
-//            if (currentSegment == 5 && x2 + getWidth2() > rightEdge) {
-//                moveto2((leftEdge+50) - getWidth2(), getY2());
-//                p2velocity = p2velocity * 0.9;
-//                System.out.println("luigi is touching right");
-//                currentSegment = 10;
-//
-//                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment2.png"));
-//                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace2.png"));
-//
-//
-//            }
-//
-//
-//            if (currentSegment == 10 && y2 + getHeight2() > bottomEdge) {
-//                moveto2(getX2(), topEdge+50);
-//                p2velocity = p2velocity * 0.9;
-//                System.out.println("luigi is touching bottom");
-//                currentSegment = 15;  // Reset to segment 1
-//                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
-//                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace3.png"));
-//                System.out.println(currentSegment);
-//            }
-//
-//
-//            if (currentSegment == 15 && x2 < leftEdge+20) {
-//                moveto2(rightEdge-50, getY2());
-//                p2velocity = p2velocity * 0.9;
-//                System.out.println("luigi is touching left");
-//                currentSegment = 20;
-//
-//                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment4.png"));
-//                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace4.png"));
-//            }
-//
-//
-//            if (currentSegment == 20 && y2 < topEdge+20) {
-//                moveto2(getX2(), (bottomEdge-10) - getHeight2());
-//                p2velocity = p2velocity * 0.9;
-//                System.out.println("Mario is touching top");
-//                currentSegment = 5;
-//
-//                OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-//                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace1.png"));
-//            }
-//
-//            // Reset currentSegment to 5 when respawned
-//            if (p2.getX2() == RESPAWN_X2 && p2.getY2() == RESPAWN_Y2) {
-//                currentSegment = 5;
-//            }
-//
-//        }
-//
-//
-//
-//        public void rotate2 ( double input2){
-//            angle2 = angle2 + input2;
-//            while (angle2 > (Math.PI * 2)) {
-//                angle2 = angle2 - (Math.PI * 2);
-//            }
-//            while (angle2 < 0) {
-//                angle2 = angle2 + (Math.PI * 2);
-//            }
-//        }
-//
-//        public void spin2 ( double input2){
-//            internalangle2 = internalangle2 + input2;
-//            while (internalangle2 > (Math.PI * 2)) {
-//                internalangle2 = internalangle2 - (Math.PI * 2);
-//            }
-//            while (internalangle2 < 0) {
-//                internalangle2 = internalangle2 + (Math.PI * 2);
-//            }
-//        }
-//    }
-//
-//
-//    // rotates ImageObject
+    private static class ImageObject2 {
+        private double x2, y2, x2width, y2height, angle2, internalangle2, comX2, comY2;
+        private Vector<Double> coords2, triangles2;
+
+        public ImageObject2() {
+        }
+
+        public ImageObject2(double x2input, double y2input, double x2widthinput,
+                            double y2heightinput, double angleinput2) {
+            x2 = x2input;
+            y2 = y2input;
+            x2width = x2widthinput;
+            y2height = y2heightinput;
+            angle2 = angleinput2;
+            internalangle2 = 0.0;
+            coords2 = new Vector<Double>();
+        }
+
+        public double getX2() {
+            return x2;
+        }
+
+        public double getY2() {
+            return y2;
+        }
+
+        public double getWidth2() {
+            return x2width;
+        }
+
+        public double getHeight2() {
+            return y2height;
+        }
+
+        public double getAngle2() {
+            return angle2;
+        }
+
+        public double getInternalAngle2() {
+            return internalangle2;
+        }
+
+        public void setAngle2(double angleinput2) {
+            angle2 = angleinput2;
+        }
+
+        public void setInternalAngle2(double input2) {
+            internalangle2 = input2;
+        }
+
+        public Vector<Double> getCoords2() {
+            return coords2;
+        }
+
+        public void setCoords2(Vector<Double> input2) {
+            coords2 = input2;
+            generateTriangles2();
+        }
+
+        public void generateTriangles2() {
+            triangles2 = new Vector<Double>();
+            // format: (0, 1), (2, 3), (4, 5) is x,y coords of triangle
+
+            // get center point of all coords
+            comX2 = getComX2();
+            comY2 = getComY2();
+
+            for (int i = 0; i < coords2.size(); i = i + 2) {
+                triangles2.addElement(coords2.elementAt(i));
+                triangles2.addElement(coords2.elementAt(i + 1));
+
+                triangles2.addElement(coords2.elementAt((i + 2) % coords2.size()));
+                triangles2.addElement(coords2.elementAt((i + 3) % coords2.size()));
+
+                triangles2.addElement(comX2);
+                triangles2.addElement(comY2);
+            }
+        }
+
+        public void printTriangles2() {
+            for (int i = 0; i < triangles2.size(); i = i + 6) {
+                System.out.print("p0x: " + triangles2.elementAt(i) + ", p0y " + triangles2.elementAt(i + 1));
+                System.out.print(" p1x: " + triangles2.elementAt(i + 2) + ", p1y: " + triangles2.elementAt(i + 3));
+                System.out.println(" p2x: " + triangles2.elementAt(i + 4) + ", p2y: " + triangles2.elementAt(i + 5));
+            }
+        }
+
+        public double getComX2() {
+            double ret = 0;
+            if (coords2.size() > 0) {
+                for (int i = 0; i < coords2.size(); i = i + 2) {
+                    ret = ret + coords2.elementAt(i);
+                }
+                ret = ret / (coords2.size() / 2.0);
+            }
+            return ret;
+        }
+
+        public double getComY2() {
+            double ret = 0;
+            if (coords2.size() > 0) {
+                for (int i = 1; i < coords2.size(); i = i + 2) {
+                    ret = ret + coords2.elementAt(i);
+                }
+                ret = ret / (coords2.size() / 2.0);
+            }
+            return ret;
+        }
+
+        public void move2(double x2input, double y2input) {
+            x2 = x2 + x2input;
+            y2 = y2 + y2input;
+        }
+
+        public void moveto2(double x2input, double y2input) {
+            x2 = x2input;
+            y2= y2input;
+        }
+
+
+
+        int currentSegment = 5;
+        public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
+
+            if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                currentSegment = 5;
+            }
+
+
+            if (currentSegment == 5 && x2 + getWidth2() > rightEdge) {
+                moveto2((leftEdge+50) - getWidth2(), getY2());
+                p2velocity = p2velocity * 0.9;
+                System.out.println("luigi is touching right");
+                currentSegment = 10;
+
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment2.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace2.png"));
+
+
+            }
+
+
+            if (currentSegment == 10 && y2 + getHeight2() > bottomEdge) {
+                moveto2(getX2(), topEdge+50);
+                p2velocity = p2velocity * 0.9;
+                System.out.println("luigi is touching bottom");
+                currentSegment = 15;  // Reset to segment 1
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment3.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace3.png"));
+                System.out.println(currentSegment);
+            }
+
+
+            if (currentSegment == 15 && x2 < leftEdge+20) {
+                moveto2(rightEdge-50, getY2());
+                p2velocity = p2velocity * 0.9;
+                System.out.println("luigi is touching left");
+                currentSegment = 20;
+
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment4.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace4.png"));
+            }
+
+
+            if (currentSegment == 20 && y2 < topEdge+20) {
+                moveto2(getX2(), (bottomEdge-10) - getHeight2());
+                p2velocity = p2velocity * 0.9;
+                System.out.println("Mario is touching top");
+                currentSegment = 5;
+
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace1.png"));
+            }
+
+            // Reset currentSegment to 5 when respawned
+            if (p2.getX2() == RESPAWN_X2 && p2.getY2() == RESPAWN_Y2) {
+                currentSegment = 5;
+            }
+
+        }
+
+
+
+        public void rotate2 ( double input2){
+            angle2 = angle2 + input2;
+            while (angle2 > (Math.PI * 2)) {
+                angle2 = angle2 - (Math.PI * 2);
+            }
+            while (angle2 < 0) {
+                angle2 = angle2 + (Math.PI * 2);
+            }
+        }
+
+        public void spin2 ( double input2){
+            internalangle2 = internalangle2 + input2;
+            while (internalangle2 > (Math.PI * 2)) {
+                internalangle2 = internalangle2 - (Math.PI * 2);
+            }
+            while (internalangle2 < 0) {
+                internalangle2 = internalangle2 + (Math.PI * 2);
+            }
+        }
+    }
+
+
+    // rotates ImageObject
     private static AffineTransformOp rotateImageObject(ImageObject obj) {
         AffineTransform at = new AffineTransform();
         at.translate(obj.getWidth() / 2.0, obj.getHeight() / 2.0);
@@ -1073,19 +1100,19 @@ public class MushroomGorge {
         at.translate(-obj.getWidth() / 2.0, -obj.getHeight() / 2.0);
         return new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
     }
-//
-//    // rotates ImageObject
-////    private static AffineTransformOp rotateImageObject2(ImageObject2 obj2) {
-////        AffineTransform at = new AffineTransform();
-////        at.translate(obj2.getWidth2() / 2.0, obj2.getHeight2() / 2.0);
-////        at.rotate(-obj2.getAngle2());
-////        at.translate(-obj2.getWidth2() / 2.0, -obj2.getHeight2() / 2.0);
-////        return new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-////    }
-//
-//
-//
-//
+
+    // rotates ImageObject
+    private static AffineTransformOp rotateImageObject2(ImageObject2 obj2) {
+        AffineTransform at = new AffineTransform();
+        at.translate(obj2.getWidth2() / 2.0, obj2.getHeight2() / 2.0);
+        at.rotate(-obj2.getAngle2());
+        at.translate(-obj2.getWidth2() / 2.0, -obj2.getHeight2() / 2.0);
+        return new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+    }
+
+
+
+
     // initiates key actions from panel key responses
     private static void bindKey(JPanel panel, String input) {
         panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("pressed " + input), input + " pressed");
@@ -1094,12 +1121,12 @@ public class MushroomGorge {
         panel.getInputMap(IFW).put(KeyStroke.getKeyStroke("released " + input), input + " released");
         panel.getActionMap().put(input + " released", new KeyReleased(input));
     }
-//
-//
-//
-//
-//
-//    // monitors keypresses
+
+
+
+
+
+    // monitors keypresses
     private static class KeyPressed extends AbstractAction {
         public KeyPressed() { action = ""; }
 
@@ -1186,18 +1213,18 @@ public class MushroomGorge {
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 4.7);
             p1velocity = 0.0;
 
-//            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 4.7);
-//            p2velocity = 0.0;
+            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 4.7);
+            p2velocity = 0.0;
 
             try { Thread.sleep(32); } catch (InterruptedException ie) { }
 
             endgame = false;
             Thread t1 = new Thread( new Animate() );
             Thread t2 = new Thread( new PlayerMoverplayer1() );
-//            Thread t3 = new Thread( new PlayerMoverplayer2() );
+            Thread t3 = new Thread( new PlayerMoverplayer2() );
             t1.start();
             t2.start();
-//            t3.start();
+            t3.start();
         }
     }
 
@@ -1215,12 +1242,17 @@ public class MushroomGorge {
 
 
 
+
+
+
+
+
     public static void main(String[] args){
         setup();
 
-        MushroomGorge racer2D = new MushroomGorge();
-        racer2D.setup();
-        racer2D.speedometer = new Speedometer(20, 20);
+        src.src.MushroomGorge MushroomGorge = new src.src.MushroomGorge();
+        MushroomGorge.setup();
+        MushroomGorge.speedometer = new Speedometer(20, 20);
 
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appFrame.setSize(WINWIDTH, WINHEIGHT);
@@ -1248,22 +1280,22 @@ public class MushroomGorge {
 
 
 
-//
-//
-//        bindKey(myPanel, "W");
-//        bindKey(myPanel, "S");
-//        bindKey(myPanel, "A");
-//        bindKey(myPanel, "D");
-//        bindKey(myPanel, "TAB");
-//
-//
+
+
+        bindKey(myPanel, "W");
+        bindKey(myPanel, "S");
+        bindKey(myPanel, "A");
+        bindKey(myPanel, "D");
+        bindKey(myPanel, "TAB");
+
+
         bindKey(myPanel, "UP");
         bindKey(myPanel, "DOWN");
         bindKey(myPanel, "LEFT");
         bindKey(myPanel, "RIGHT");
         bindKey(myPanel, "SPACE");
-//
-//
+
+
 
 
 
@@ -1280,11 +1312,11 @@ public class MushroomGorge {
         Random rand  = new Random();
         int rand_int1 = rand.nextInt(3);
         if (rand_int1 == 2) {
-            BackgroundMusic menu_theme = new BackgroundMusic("res/MarioKart64.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("res/RainbowRoad/MarioKart64.wav");
             menu_theme.play();
         }
         else {
-            BackgroundMusic menu_theme = new BackgroundMusic("res/Rainbow-Road-Mario-Kart-Wii.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("res/RainbowRoad/Rainbow-Road-Mario-Kart-Wii.wav");
             menu_theme.play();
 
 
@@ -1334,7 +1366,7 @@ public class MushroomGorge {
 
     private static ImageObject p1; // player1 and player2 racecar object
 
-//    private static ImageObject2 p2; // player1 and player2 racecar object
+    private static ImageObject2 p2; // player1 and player2 racecar object
 
 
 //    private static ImageObject2 p2; // player1 and player2 racecar object
@@ -1344,14 +1376,14 @@ public class MushroomGorge {
     private static JFrame appFrame;
 
     private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
-    private static final double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
-    private static final double RESPAWN_Y = 343.13283518037696; // Set the appropriate y-coordinate
+    private static double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y = 343.13283518037696; // Set the appropriate y-coordinate
 
     private static final double RESPAWN_X2 = 956.1883469051929 ; // Set the appropriate x-coordinate
     private static final double RESPAWN_Y2 = 343.13283518037696; // Set the appropriate y-coordinate
 
 
     private static BufferStrategy bs;
-    private static BufferedImage OnTrack, OffTrack, player1;//player2, nitroFlamePNG; // TODO: add player2
+    private static BufferedImage OnTrack, OffTrack, player1, player2, nitroFlamePNG; // TODO: add player2
 
 }

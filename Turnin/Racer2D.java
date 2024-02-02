@@ -52,7 +52,7 @@ public class Racer2D {
 
 
 
-        src.src.RainbowRoadSinglePlayer.setup();
+        src.src.RainbowRoad.setup();
 
     }
 

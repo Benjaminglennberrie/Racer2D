@@ -7,10 +7,13 @@ public class CourseSelectionFrame extends JFrame {
 
     public CourseSelectionFrame() {
         setTitle("Course Selection");
-        setSize(400, 200); // Increased width to accommodate more buttons
+        setSize(1280, 840); // Increased width to accommodate more buttons
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JButton rainbowRoadButton = new JButton("Rainbow Road");
+        JButton rainbowRoadMultiplayerButton = new JButton("Rainbow Road Multiplayer");
+        JButton MooMooMeadowsMultiplayerButton = new JButton("Moo Moo Meadows Multiplayer");
+
         JButton MooMooMeadowsButton = new JButton("Moo Moo Meadows");
         JButton MushroomGeorgeButton = new JButton("Mushroom George");
         JButton CBUTrackButton = new JButton("CBU Track!");
@@ -23,9 +26,15 @@ public class CourseSelectionFrame extends JFrame {
 
         JPanel panel = new JPanel();
         panel.add(rainbowRoadButton);
+        panel.add(rainbowRoadMultiplayerButton);
+
         panel.add(MooMooMeadowsButton);
+        panel.add(MooMooMeadowsMultiplayerButton);
+
         panel.add(MushroomGeorgeButton);
         panel.add(CBUTrackButton);
+
+
 
 
         add(panel);
@@ -38,7 +47,7 @@ public class CourseSelectionFrame extends JFrame {
         SwingUtilities.invokeLater(() -> {
             try {
                 // Run the Racer2D class using reflection
-                Class<?> racer2DClass = Class.forName("src.src.RainbowRoadSinglePlayer");
+                Class<?> racer2DClass = Class.forName("src.src.RainbowRoad");
                 racer2DClass.getMethod("main", String[].class).invoke(null, (Object) null);
             } catch (Exception e) {
                 e.printStackTrace();

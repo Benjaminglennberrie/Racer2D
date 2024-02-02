@@ -52,7 +52,7 @@ public class CBUTrack {
 
 
 
-        src.src.RainbowRoadSinglePlayer.setup();
+        src.src.RainbowRoad.setup();
 
     }
 
