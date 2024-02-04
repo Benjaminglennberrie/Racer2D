@@ -67,14 +67,14 @@ public class CBUTrack {
 
         endgame = false;
 
-        p1width = 50; //30
-        p1height = 50; //30
+        p1width = 20; //30
+        p1height = 20; //30
         p1originalX = RESPAWN_X;
         p1originalY = RESPAWN_Y;
 
 
-        p2width = 50; //30
-        p2height = 50; //30
+        p2width = 20; //30
+        p2height = 20; //30
         p2originalX = RESPAWN_X2;
         p2originalY = RESPAWN_Y2;
 
@@ -85,21 +85,24 @@ public class CBUTrack {
 
 
         try { // IO
-//            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\bluecar1.png") );
-            player1 = ImageIO.read( new File("res/marioplayer.png") );
+//            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\CBUTrack\\res\\bluecar1.png") );
+            player1 = ImageIO.read( new File("res/RainbowRoad/marioplayersmall.png") );
 
-            player2 = ImageIO.read( new File("res/luigiplayer.png"));
-
-
-            nitroFlamePNG = ImageIO.read( new File("res/nitroboostflame.png") );
+            player2= ImageIO.read( new File("res/RainbowRoad/luigiplayersmall.png"));
 
 
 
-            OnTrack = ImageIO.read( new File("res/largerrainbowroad.png") );
-//            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            OffTrack = ImageIO.read( new File("res/largerrainbowroadspace.png") );
-//            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
+
+            OnTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayerlogo.png") );
+//            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/CBUTrack-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
+
+            OffTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayerspace.png") );
+//            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/CBUTrack-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
+
+            finishline = ImageIO.read( new File("res/RainbowRoad/FINISHLINEMULTIPLAYER.png") );
+
+            checkpoint = ImageIO.read( new File("res/RainbowRoad/CHECKPOINTMULTIPLAYER.png") );
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +112,7 @@ public class CBUTrack {
 
 
     public static class BackgroundMusic implements Runnable {
-        private String file = "res/Rainbow-Road-Mario-Kart-Wii.wav";
+        private String file = "res/RainbowRoad/Rainbow-Road-Mario-Kart-Wii.wav";
 
 
         public BackgroundMusic(String file) {
@@ -180,18 +183,6 @@ public class CBUTrack {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     private static class RoundBorder implements Border { // Used for rounded buttons
         private int radius;
         private Color color;
@@ -257,6 +248,7 @@ public class CBUTrack {
 
 
     private static class Animate implements Runnable, ImageObserver {
+        int i = 0;
         public void run() {
             bs = appFrame.getBufferStrategy();
             if (bs == null) {
@@ -264,12 +256,140 @@ public class CBUTrack {
             }
 
             while (!endgame) {
+
+
                 Graphics g = bs.getDrawGraphics();
                 Graphics2D g2D = (Graphics2D) g;
+
+
+
 
                 // Draw the track
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
+
+
+                g2D.drawImage(finishline, XOFFSET, YOFFSET, null);
+
+                g2D.drawImage(checkpoint, XOFFSET, YOFFSET, null);
+
+
+
+
+                g2D.setColor(Color.RED);
+
+                g2D.setFont(new Font("Arial", Font.PLAIN, 200));
+
+                //Check if a player has won.
+                if (lapCount1 == numLapsToWin) {
+                    g2D.drawString("Mario won!", 75, 420 );
+                    BackgroundMusic menu_theme = new BackgroundMusic("res/finishlapyay.wav");
+                    menu_theme.play();
+                    endgame = true;
+                }
+                //Check if a player has won.
+                if (lapCount2 == numLapsToWin) {
+                    g2D.drawString("Luigi won!", 75, 420 );
+                    BackgroundMusic menu_theme = new BackgroundMusic("res/finishlapyay.wav");
+                    menu_theme.play();
+                    endgame = true;
+                }
+
+
+
+
+
+                g2D.setColor(Color.LIGHT_GRAY);
+
+                g2D.setFont(new Font("Arial", Font.PLAIN, 10));
+
+                g2D.drawString("Player 1:  Velocity: " + Math.round(p1velocity * 10), 50, 50);
+                g2D.drawString("Lap Counter " + lapCount1, 200, 50);
+                g2D.drawString("Best Lap Time " + String.format("%.2f", bestLapP1) + " seconds", 300, 50);
+
+                g2D.drawString("Player 2:  Velocity: " + Math.round(p2velocity * 10), 600, 50);
+                g2D.drawString("Lap Counter " + lapCount2, 750, 50);
+                g2D.drawString("Best Lap Time " + String.format("%.2f", bestLapP2) + " seconds", 850, 50);
+
+
+                if (bestLapP1 == 0) {
+                    bestLapP1 = LaptimeP1;
+                }
+                if (bestLapP2 == 0) {
+                    bestLapP2 = LaptimeP2;
+                }
+
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), checkpoint)) {
+                    hasCrossedCheckPointp1 = true;
+                }
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), checkpoint)) {
+                    hasCrossedCheckPointp2 = true;
+                }
+
+
+
+
+
+
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), finishline)) {
+                    if (!hasCrossedFinishLinep1 && hasCrossedCheckPointp1 == true) {
+                        lapCount1 += 1;
+                        hasCrossedFinishLinep1 = true;
+                        hasCrossedCheckPointp1 = false;
+
+                        // Stop timing the lap
+                        lapEndTimeP1 = System.currentTimeMillis();
+                        LaptimeP1 = (lapEndTimeP1 - lapStartTimeP1) / 1000.0;
+
+                        // Display lap time for player 1
+                        System.out.println("Player 1 Lap Time: " + LaptimeP1 + " seconds");
+
+                        // Check if it's a new best lap
+                        if (LaptimeP1 < bestLapP1) {
+                            bestLapP1 = LaptimeP1;
+                            System.out.println("Player 1 New Best Lap: " + bestLapP1 + " seconds");
+                        }
+
+                        // Start timing the new lap
+                        lapStartTimeP1 = System.currentTimeMillis();
+                    }
+                    lapStartTimeP1 = System.currentTimeMillis();
+
+                } else {
+                    hasCrossedFinishLinep1 = false;
+                }
+
+
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), finishline)) {
+                    if (!hasCrossedFinishLinep2 && hasCrossedCheckPointp2 == true) {
+                        lapCount2 += 1;
+                        hasCrossedFinishLinep2 = true;
+                        hasCrossedCheckPointp2 = false;
+
+                        // Stop timing the lap
+                        lapEndTimeP2 = System.currentTimeMillis();
+                        LaptimeP2 = (lapEndTimeP2 - lapStartTimeP2) / 1000.0;
+
+                        // Display lap time for player 2
+                        System.out.println("Player 2 Lap Time: " + LaptimeP2 + " seconds");
+
+                        // Check if it's a new best lap
+                        if (LaptimeP2 < bestLapP2) {
+                            bestLapP2 = LaptimeP2;
+                            System.out.println("Player 1 New Best Lap: " + bestLapP2 + " seconds");
+                        }
+
+                        // Start timing the new lap
+                        lapStartTimeP2 = System.currentTimeMillis();
+                    }
+                    lapStartTimeP2 = System.currentTimeMillis();
+
+                } else {
+                    hasCrossedFinishLinep2 = false;
+                }
+
+
+
 
                 // Draw the player
                 g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int) (p1.getX() + 0.5),
@@ -279,16 +399,27 @@ public class CBUTrack {
 
                 if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        player1 = ImageIO.read( new File("res/marioplayerboosting.png") );
+                        player1 = ImageIO.read( new File("res/RainbowRoad/marioplayerboostingsmall.png") );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                System.out.println("Coords:" + p1.x + "  " + p1.y);
+//                System.out.println("Coords:" + p1.x + "  " + p1.y);
+
+
+// RESPAWN PROGRAMMING
+                i += 1;
+                if (i==10 && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                    RESPAWN_X = p1.x;
+                    RESPAWN_Y = p1.y;
+                    System.out.println("   \nSpawn Reset\n   ");
+                }
+
+
 
                 if (!spacePressed) {
                     try {
-                        player1 = ImageIO.read(new File("res/marioplayer.png"));
+                        player1 = ImageIO.read(new File("res/RainbowRoad/marioplayersmall.png"));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -302,30 +433,37 @@ public class CBUTrack {
                 g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
                         (int) (p2.getY2() + 0.5), null);
 
-                if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                if (qPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
-                        player2 = ImageIO.read( new File("res/marioplayerboosting.png") );
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
-
-                if (!tabPressed) {
-                    try {
-                        player2 = ImageIO.read(new File("res/luigiplayer.png"));
+                        player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayerboostingsmall.png") );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
 
+//                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
+
+                if (i==10 && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                    RESPAWN_X2 = p2.x2;
+                    RESPAWN_Y2 = p2.y2;
+                    System.out.println("   \nSpawn Reset 2\n   ");
+                }
+                if (i==10) {
+                    i=0;
+                }
+                if (!qPressed) {
+                    try {
+                        player2 = ImageIO.read(new File("res/RainbowRoad/luigiplayersmall.png"));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
 
 
 
 
 
-                // Draw the speedometer
-                speedometer.draw(g, p1velocity);
+
 
 
                 g.dispose();
@@ -359,11 +497,11 @@ public class CBUTrack {
     // thread responsible for updating player movement
     private static class PlayerMoverplayer1 implements Runnable {
         public PlayerMoverplayer1() {
-            p1velocitystep = 0.02; // aka accel
+            p1velocitystep = 0.01; // aka accel
             p1rotatestep = 0.03; //0.03
-            p1maxvelocity = 5;
+            p1maxvelocity = 2;
             p1brakingforce = 0.04;
-            p1nitroBoost = 4;
+            p1nitroBoost = 2;
 
         }
 
@@ -376,33 +514,38 @@ public class CBUTrack {
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-                    try {
-                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+
+
+//                    try {
+//                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    try {
+//                        OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+
 
                     p1.moveto(RESPAWN_X,RESPAWN_Y);
-                    p1.setAngle(4.8);
 
-                    currentSegment = 5;
+
+//                    p1.setAngle(4.8);
+
+//                    currentSegment = 5;
                     p1velocity = 0.0;
 
 
 
                 } else {
-                    p1maxvelocity = 3;
-                    p1velocitystep = 0.02; // aka accel
+                    p1maxvelocity = 2;
+                    p1velocitystep = 0.01; // aka accel
 
                 }
 
@@ -421,7 +564,7 @@ public class CBUTrack {
 
 
                     p1maxvelocity += p1nitroBoost;
-                    p1velocitystep = 0.04;
+                    p1velocitystep = 0.03;
 
                     double flameX = p1.getX() + (p1.getWidth() / 2.0) - nitroFlamePNGWidth / 2.0;
                     double flameY = p1.getY() + (p1.getHeight() / 2.0) - nitroFlamePNGHeight / 2.0;
@@ -441,7 +584,6 @@ public class CBUTrack {
                     }
                 }
                 if (downPressed == true) {
-                    System.out.println("down IS BEING PRESSED");
 
                     if (p1velocity < -1) { // ensure max rev speed
                         p1velocity = -1;
@@ -490,11 +632,11 @@ public class CBUTrack {
     // thread responsible for updating player movement
     private static class PlayerMoverplayer2 implements Runnable {
         public PlayerMoverplayer2() {
-            p2velocitystep = 0.02; // aka accel
+            p2velocitystep = 0.01; // aka accel
             p2rotatestep = 0.03; //0.03
-            p2maxvelocity = 5;
+            p2maxvelocity = 2;
             p2brakingforce = 0.04;
-            p2nitroBoost = 4;
+            p2nitroBoost = 2;
 
         }
 
@@ -507,38 +649,38 @@ public class CBUTrack {
 
                 if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-                    try {
-                        OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        OffTrack = ImageIO.read(new File("res/largerrainbowroadspace.png"));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+//                    try {
+//                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    try {
+//                        OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace.png"));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
 
                     p2.moveto2(RESPAWN_X2,RESPAWN_Y2);
-                    p2.setAngle2(4.8);
 
-                    currentSegment = 5;
+
+//                    currentSegment = 5;
                     p2velocity = 0.0;
 
 
 
                 } else {
-                    p2maxvelocity = 3;
-                    p2velocitystep = 0.02; // aka accel
+                    p2maxvelocity = 2;
+                    p2velocitystep = 0.01; // aka accel
 
                 }
 
 
-                if (tabPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
+                if (qPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
                     //CHEAT
                     // NITRO
                     if (wPressed == false) {
@@ -549,7 +691,7 @@ public class CBUTrack {
                         }
                     }
                     p2maxvelocity += p2nitroBoost;
-                    p2velocitystep = 0.04;
+                    p2velocitystep = 0.02;
                     System.out.println("BOOOOOOOST");
                 }
 
@@ -590,7 +732,7 @@ public class CBUTrack {
                     }
                 }
                 // apply drag force
-                if (!wPressed && !sPressed && !aPressed && !dPressed && !tabPressed
+                if (!wPressed && !sPressed && !aPressed && !dPressed && !qPressed
                         && p2velocity != 0) {
                     if ((p2velocity - 0.1) < 0) {
                         p2velocity = 0;
@@ -778,59 +920,62 @@ public class CBUTrack {
         int currentSegment = 5;
         public void screenBounds(double leftEdge, double rightEdge, double topEdge, double bottomEdge) throws IOException {
 
-            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
-                currentSegment = 5;
-            }
+//            if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+//                currentSegment = 5;
+//            }
 
-            if (currentSegment == 5 && x + getWidth() > rightEdge) {
-                moveto((leftEdge+50) - getWidth(), getY());
-                p1velocity = p1velocity * 0.9;
-                System.out.println("Mario is touching right");
-                currentSegment = 10;
+//            if (currentSegment == 5 && x + getWidth() > rightEdge) {
+//                moveto((leftEdge+50) - getWidth(), getY());
+//                p1velocity = p1velocity * 0.9;
+//                System.out.println("Mario is touching right");
+//                currentSegment = 10;
+//
+//                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment2.png"));
+//                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace2.png"));
+//                finishline = ImageIO.read(new File("res/RainbowRoad/NOFINISHLINE.png"));
+//
+//
+//            }
+//
+//
+//            if (currentSegment == 10 && y + getHeight() > bottomEdge) {
+//                moveto(getX(), topEdge+50);
+//                p1velocity = p1velocity * 0.9;
+//                System.out.println("Mario is touching bottom");
+//                currentSegment = 15;  // Reset to segment 1
+//                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment3.png"));
+//                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace3.png"));
+//                finishline = ImageIO.read(new File("res/RainbowRoad/NOFINISHLINE.png"));
+//                System.out.println(currentSegment);
+//            }
+//
+//
+//            if (currentSegment == 15 && x < leftEdge+20) {
+//                moveto(rightEdge-50, getY());
+//                p1velocity = p1velocity * 0.9;
+//                System.out.println("Mario is touching left");
+//                currentSegment = 20;
+//
+//                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment4.png"));
+//                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace4.png"));
+//            }
+//
+//
+//            if (currentSegment == 20 && y < topEdge+20) {
+//                moveto(getX(), (bottomEdge-10) - getHeight());
+//                p1velocity = p1velocity * 0.9;
+//                System.out.println("Mario is touching top");
+//                currentSegment = 5;
+//                finishline = ImageIO.read(new File("res/RainbowRoad/FINISHLINEMULTIPLAYER.png"));
+//
+//                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadsegment1.png"));
+//                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace1.png"));
+//            }
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment2.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace2.png"));
-
-
-            }
-
-
-            if (currentSegment == 10 && y + getHeight() > bottomEdge) {
-                moveto(getX(), topEdge+50);
-                p1velocity = p1velocity * 0.9;
-                System.out.println("Mario is touching bottom");
-                currentSegment = 15;  // Reset to segment 1
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace3.png"));
-                System.out.println(currentSegment);
-            }
-
-
-            if (currentSegment == 15 && x < leftEdge+20) {
-                moveto(rightEdge-50, getY());
-                p1velocity = p1velocity * 0.9;
-                System.out.println("Mario is touching left");
-                currentSegment = 20;
-
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment4.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace4.png"));
-            }
-
-
-            if (currentSegment == 20 && y < topEdge+20) {
-                moveto(getX(), (bottomEdge-10) - getHeight());
-                p1velocity = p1velocity * 0.9;
-                System.out.println("Mario is touching top");
-                currentSegment = 5;
-
-                OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace1.png"));
-            }
-
-            // Reset currentSegment to 5 when respawned
-            if (p1.getX() == RESPAWN_X && p1.getY() == RESPAWN_Y) {
-                currentSegment = 5;
-            }
+//            // Reset currentSegment to 5 when respawned
+//            if (p1.getX() == RESPAWN_X && p1.getY() == RESPAWN_Y) {
+//                currentSegment = 5;
+//            }
 
         }
 
@@ -993,8 +1138,8 @@ public class CBUTrack {
                 System.out.println("luigi is touching right");
                 currentSegment = 10;
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment2.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace2.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment2.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace2.png"));
 
 
             }
@@ -1005,8 +1150,8 @@ public class CBUTrack {
                 p2velocity = p2velocity * 0.9;
                 System.out.println("luigi is touching bottom");
                 currentSegment = 15;  // Reset to segment 1
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment3.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace3.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment3.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace3.png"));
                 System.out.println(currentSegment);
             }
 
@@ -1017,8 +1162,8 @@ public class CBUTrack {
                 System.out.println("luigi is touching left");
                 currentSegment = 20;
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroadSegment4.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace4.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment4.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace4.png"));
             }
 
 
@@ -1028,8 +1173,8 @@ public class CBUTrack {
                 System.out.println("Mario is touching top");
                 currentSegment = 5;
 
-                OnTrack = ImageIO.read(new File("res/largerrainbowroad.png"));
-                OffTrack = ImageIO.read(new File("res/largerrainbowroadspace1.png"));
+                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace1.png"));
             }
 
             // Reset currentSegment to 5 when respawned
@@ -1114,7 +1259,7 @@ public class CBUTrack {
             if (action.equals("S")) { sPressed = true; }
             if (action.equals("A")) { aPressed = true; }
             if (action.equals("D")) { dPressed = true; }
-            if (action.equals("TAB")) { tabPressed = true; }
+            if (action.equals("Q")) { qPressed = true; }
 
         }
 
@@ -1143,7 +1288,7 @@ public class CBUTrack {
             if (action.equals("S")) { sPressed = false; }
             if (action.equals("A")) { aPressed = false; }
             if (action.equals("D")) { dPressed = false; }
-            if (action.equals("TAB")) { tabPressed = false; }
+            if (action.equals("Q")) { qPressed = false; }
 
 
 
@@ -1165,6 +1310,7 @@ public class CBUTrack {
         }
 
         public void actionPerformed(ActionEvent ae) {
+            lapMenu.setVisible(false);
             startButton.setVisible(false);
             quitButton.setVisible(false);
             endgame = true;
@@ -1179,12 +1325,12 @@ public class CBUTrack {
             sPressed = false;
             aPressed = false;
             dPressed = false;
-            tabPressed = false;
+            qPressed = false;
 
-            p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 4.7);
+            p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0);
             p1velocity = 0.0;
 
-            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 4.7);
+            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 0);
             p2velocity = 0.0;
 
             try { Thread.sleep(32); } catch (InterruptedException ie) { }
@@ -1213,7 +1359,41 @@ public class CBUTrack {
 
 
 
+    private static class GameLevel implements ActionListener {
+        public int decodeLevel(String input) {
+            if (input.equals("One")) {
+                numLapsToWin = 1;
+            } else if (input.equals("Two")) {
+                numLapsToWin = 2;
+            } else if (input.equals("Three")) {
+                numLapsToWin = 3;
+            } else if (input.equals("Four")) {
+                numLapsToWin = 4;
+            } else if (input.equals("Five")) {
+                numLapsToWin = 5;
+            } else if (input.equals("Six")) {
+                numLapsToWin = 6;
+            } else if (input.equals("Seven")) {
+                numLapsToWin = 7;
+            } else if (input.equals("Eight")) {
+                numLapsToWin = 8;
+            } else if (input.equals("Nine")) {
+                numLapsToWin = 9;
+            } else if (input.equals("Ten")) {
+                numLapsToWin = 10;
+            }
+            System.out.println(numLapsToWin);
 
+            return numLapsToWin;
+
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JComboBox cb = (JComboBox) e.getSource();
+            String textLevel = (String) cb.getSelectedItem();
+            level = decodeLevel(textLevel);
+        }
+    }
 
 
 
@@ -1221,9 +1401,9 @@ public class CBUTrack {
     public static void main(String[] args){
         setup();
 
-        src.src.CBUTrack racer2D = new src.src.CBUTrack();
-        racer2D.setup();
-        racer2D.speedometer = new Speedometer(20, 20);
+        src.src.CBUTrack CBUTrack = new src.src.CBUTrack();
+        CBUTrack.setup();
+        CBUTrack.speedometer = new Speedometer(20, 20);
 
         appFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         appFrame.setSize(WINWIDTH, WINHEIGHT);
@@ -1237,10 +1417,12 @@ public class CBUTrack {
         gbc.ipady = 15;
         gbc.ipadx = 50;
 
+
         startButton = new MyButton("START RACE");
         startButton.addActionListener(new StartGame(myPanel));
         setButtonAppearance(startButton);
         myPanel.add(startButton, gbc);
+
 
         gbc.insets = new Insets(10, 0, 0, 0);
 
@@ -1250,14 +1432,22 @@ public class CBUTrack {
         myPanel.add(quitButton, gbc);
 
 
+        String[] laps = {"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"};
+        lapMenu = new JComboBox<String>(laps);
+        lapMenu.setSelectedIndex(2);
+        lapMenu.addActionListener(new GameLevel());
+        myPanel.add(lapMenu, gbc);
 
-
+        System.out.println(lapMenu);
+        appFrame.getContentPane().add(myPanel, "South");
+        appFrame.setVisible(true);
+// Disable focus traversal keys for the JComboBox
 
         bindKey(myPanel, "W");
         bindKey(myPanel, "S");
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
-        bindKey(myPanel, "TAB");
+        bindKey(myPanel, "Q");
 
 
         bindKey(myPanel, "UP");
@@ -1283,11 +1473,11 @@ public class CBUTrack {
         Random rand  = new Random();
         int rand_int1 = rand.nextInt(3);
         if (rand_int1 == 2) {
-            BackgroundMusic menu_theme = new BackgroundMusic("res/MarioKart64.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("res/RainbowRoad/MarioKart64.wav");
             menu_theme.play();
         }
         else {
-            BackgroundMusic menu_theme = new BackgroundMusic("res/Rainbow-Road-Mario-Kart-Wii.wav");
+            BackgroundMusic menu_theme = new BackgroundMusic("res/RainbowRoad/Rainbow-Road-Mario-Kart-Wii.wav");
             menu_theme.play();
 
 
@@ -1319,14 +1509,16 @@ public class CBUTrack {
     private static long lapStartTime;
     private static long bestLapTime = Long.MAX_VALUE;
     private static long currentLapTime;
-    private static int lapCount = 0;
-    private static boolean lapInProgress = false;
+    private static int lapCount1 = 0;
+    private static int lapCount2 = 0;
 
 
     private static Boolean endgame;
-    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, tabPressed;
+    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, qPressed;
 
     private static JButton startButton, quitButton;
+
+    private static JComboBox<String> lapMenu;
 
     private static Color CELESTIAL = new Color(64, 224, 208);
     private static Color HIGHLIGHT = new Color(199, 199, 199);
@@ -1347,14 +1539,33 @@ public class CBUTrack {
     private static JFrame appFrame;
 
     private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
-    private static final double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
-    private static final double RESPAWN_Y = 343.13283518037696; // Set the appropriate y-coordinate
+    private static double RESPAWN_X = 1081 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y = 220; // Set the appropriate y-coordinate
 
-    private static final double RESPAWN_X2 = 956.1883469051929 ; // Set the appropriate x-coordinate
-    private static final double RESPAWN_Y2 = 343.13283518037696; // Set the appropriate y-coordinate
+    private static double RESPAWN_X2 = 1104 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y2 = 220; // Set the appropriate y-coordinate
+    private static double LaptimeP1=0;
+    private static double LaptimeP2=0;
+    private static double bestLapP1=0;
+    private static double bestLapP2=0;
 
+    private static long lapStartTimeP1 = 0;
+    private static long lapEndTimeP1 = 0;
+    private static long lapEndTimeP2 = 0;
+
+    private static long lapStartTimeP2 = 0;
+
+
+    static boolean hasCrossedFinishLinep1 = false;
+    static boolean hasCrossedFinishLinep2 = false;
+    static boolean hasCrossedCheckPointp1 = false;
+    static boolean hasCrossedCheckPointp2 = false;
+
+    private static int level;
+
+    private static int numLapsToWin = 3;
 
     private static BufferStrategy bs;
-    private static BufferedImage OnTrack, OffTrack, player1, player2, nitroFlamePNG; // TODO: add player2
+    private static BufferedImage OnTrack, OffTrack, finishline, checkpoint, player1, player2, nitroFlamePNG; // TODO: add player2
 
 }

@@ -67,14 +67,14 @@ public class MooMooMeadowsMultiplayer {
 
         endgame = false;
 
-        p1width = 50; //30
-        p1height = 50; //30
+        p1width = 20; //30
+        p1height = 20; //30
         p1originalX = RESPAWN_X;
         p1originalY = RESPAWN_Y;
 
 
-        p2width = 50; //30
-        p2height = 50; //30
+        p2width = 20; //30
+        p2height = 20; //30
         p2originalX = RESPAWN_X2;
         p2originalY = RESPAWN_Y2;
 
@@ -85,21 +85,24 @@ public class MooMooMeadowsMultiplayer {
 
 
         try { // IO
-//            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\Racer2D\\res\\bluecar1.png") );
-            player1 = ImageIO.read( new File("res/RainbowRoad/marioplayer.png") );
+//            player1 = ImageIO.read( new File("C:\\Users\\theru\\OneDrive\\Desktop\\Courses\\EGR222\\2022.01 Spring\\MooMooMeadowsMultiplayer\\res\\bluecar1.png") );
+            player1 = ImageIO.read( new File("res/RainbowRoad/marioplayersmall.png") );
 
-            player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayer.png"));
-
-
-            nitroFlamePNG = ImageIO.read( new File("res/RainbowRoad/nitroboostflame.png") );
+            player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayersmall.png"));
 
 
 
-            OnTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroad.png") );
-//            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            OffTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadspace.png") );
-//            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
+
+            OnTrack = ImageIO.read( new File("res/MooMooMeadowsMultiplayer/MooMooMeadows.png") );
+//            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/MooMooMeadowsMultiplayer-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
+
+            OffTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayerspace.png") );
+//            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/MooMooMeadowsMultiplayer-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
+
+            finishline = ImageIO.read( new File("res/RainbowRoad/FINISHLINEMULTIPLAYER.png") );
+
+            checkpoint = ImageIO.read( new File("res/RainbowRoad/CHECKPOINTMULTIPLAYER.png") );
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,18 +183,6 @@ public class MooMooMeadowsMultiplayer {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     private static class RoundBorder implements Border { // Used for rounded buttons
         private int radius;
         private Color color;
@@ -265,23 +256,139 @@ public class MooMooMeadowsMultiplayer {
             }
 
             while (!endgame) {
+
+
                 Graphics g = bs.getDrawGraphics();
                 Graphics2D g2D = (Graphics2D) g;
+
+
+
 
                 // Draw the track
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
                 g2D.drawImage(OnTrack, XOFFSET, YOFFSET, null);
 
 
-                double speedShown = Math.round(p1velocity * 1000.0) / 1000.0;
-//                int LapCounter
+            //    g2D.drawImage(finishline, XOFFSET, YOFFSET, null);
+
+            //    g2D.drawImage(checkpoint, XOFFSET, YOFFSET, null);
+
+
+
+
+                g2D.setColor(Color.RED);
+
+                g2D.setFont(new Font("Arial", Font.PLAIN, 200));
+
+                //Check if a player has won.
+                if (lapCount1 == numLapsToWin) {
+                    g2D.drawString("Mario won!", 75, 420 );
+                    BackgroundMusic menu_theme = new BackgroundMusic("res/finishlapyay.wav");
+                    menu_theme.play();
+                    endgame = true;
+                }
+                //Check if a player has won.
+                if (lapCount2 == numLapsToWin) {
+                    g2D.drawString("Luigi won!", 75, 420 );
+                    BackgroundMusic menu_theme = new BackgroundMusic("res/finishlapyay.wav");
+                    menu_theme.play();
+                    endgame = true;
+                }
+
+
+
+
 
                 g2D.setColor(Color.LIGHT_GRAY);
 
                 g2D.setFont(new Font("Arial", Font.PLAIN, 10));
 
-                g2D.drawString("Velocity: " + (speedShown*10), 50, 50);
-                g2D.drawString("Lap Counter " + (333), 150, 50);
+                g2D.drawString("Player 1:  Velocity: " + Math.round(p1velocity * 10), 50, 50);
+                g2D.drawString("Lap Counter " + lapCount1, 200, 50);
+                g2D.drawString("Best Lap Time " + String.format("%.2f", bestLapP1) + " seconds", 300, 50);
+
+                g2D.drawString("Player 2:  Velocity: " + Math.round(p2velocity * 10), 600, 50);
+                g2D.drawString("Lap Counter " + lapCount2, 750, 50);
+                g2D.drawString("Best Lap Time " + String.format("%.2f", bestLapP2) + " seconds", 850, 50);
+
+
+                if (bestLapP1 == 0) {
+                    bestLapP1 = LaptimeP1;
+                }
+                if (bestLapP2 == 0) {
+                    bestLapP2 = LaptimeP2;
+                }
+
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), checkpoint)) {
+                    hasCrossedCheckPointp1 = true;
+                }
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), checkpoint)) {
+                    hasCrossedCheckPointp2 = true;
+                }
+
+
+
+
+
+
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), finishline)) {
+                    if (!hasCrossedFinishLinep1 && hasCrossedCheckPointp1 == true) {
+                        lapCount1 += 1;
+                        hasCrossedFinishLinep1 = true;
+                        hasCrossedCheckPointp1 = false;
+
+                        // Stop timing the lap
+                        lapEndTimeP1 = System.currentTimeMillis();
+                        LaptimeP1 = (lapEndTimeP1 - lapStartTimeP1) / 1000.0;
+
+                        // Display lap time for player 1
+                        System.out.println("Player 1 Lap Time: " + LaptimeP1 + " seconds");
+
+                        // Check if it's a new best lap
+                        if (LaptimeP1 < bestLapP1) {
+                            bestLapP1 = LaptimeP1;
+                            System.out.println("Player 1 New Best Lap: " + bestLapP1 + " seconds");
+                        }
+
+                        // Start timing the new lap
+                        lapStartTimeP1 = System.currentTimeMillis();
+                    }
+                    lapStartTimeP1 = System.currentTimeMillis();
+
+                } else {
+                    hasCrossedFinishLinep1 = false;
+                }
+
+
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), finishline)) {
+                    if (!hasCrossedFinishLinep2 && hasCrossedCheckPointp2 == true) {
+                        lapCount2 += 1;
+                        hasCrossedFinishLinep2 = true;
+                        hasCrossedCheckPointp2 = false;
+
+                        // Stop timing the lap
+                        lapEndTimeP2 = System.currentTimeMillis();
+                        LaptimeP2 = (lapEndTimeP2 - lapStartTimeP2) / 1000.0;
+
+                        // Display lap time for player 2
+                        System.out.println("Player 2 Lap Time: " + LaptimeP2 + " seconds");
+
+                        // Check if it's a new best lap
+                        if (LaptimeP2 < bestLapP2) {
+                            bestLapP2 = LaptimeP2;
+                            System.out.println("Player 1 New Best Lap: " + bestLapP2 + " seconds");
+                        }
+
+                        // Start timing the new lap
+                        lapStartTimeP2 = System.currentTimeMillis();
+                    }
+                    lapStartTimeP2 = System.currentTimeMillis();
+
+                } else {
+                    hasCrossedFinishLinep2 = false;
+                }
+
+
 
 
                 // Draw the player
@@ -292,33 +399,27 @@ public class MooMooMeadowsMultiplayer {
 
                 if (spacePressed && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        player1 = ImageIO.read( new File("res/RainbowRoad/marioplayerboosting.png") );
+                        player1 = ImageIO.read( new File("res/RainbowRoad/marioplayerboostingsmall.png") );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                System.out.println("Coords:" + p1.x + "  " + p1.y);
+//                System.out.println("Coords:" + p1.x + "  " + p1.y);
 
 
 // RESPAWN PROGRAMMING
                 i += 1;
-                if (i==5 && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
+                if (i==10 && !isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     RESPAWN_X = p1.x;
                     RESPAWN_Y = p1.y;
-                    i = 0;
                     System.out.println("   \nSpawn Reset\n   ");
                 }
-                i += 1;
-                if (i==5 && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
-                    RESPAWN_X2 = p2.x2;
-                    RESPAWN_Y2 = p2.y2;
-                    i = 0;
-                    System.out.println("   \nSpawn Reset 2 \n   ");
-                }
+
+
 
                 if (!spacePressed) {
                     try {
-                        player1 = ImageIO.read(new File("res/RainbowRoad/marioplayer.png"));
+                        player1 = ImageIO.read(new File("res/RainbowRoad/marioplayersmall.png"));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -326,9 +427,6 @@ public class MooMooMeadowsMultiplayer {
                 }
 
 
-                if (i==5) {
-                    i=0;
-                }
 
 
 
@@ -337,16 +435,25 @@ public class MooMooMeadowsMultiplayer {
 
                 if (qPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
-                        player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayerboosting.png") );
+                        player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayerboostingsmall.png") );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
 
+//                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
+
+                if (i==10 && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                    RESPAWN_X2 = p2.x2;
+                    RESPAWN_Y2 = p2.y2;
+                    System.out.println("   \nSpawn Reset 2\n   ");
+                }
+                if (i==10) {
+                    i=0;
+                }
                 if (!qPressed) {
                     try {
-                        player2 = ImageIO.read(new File("res/RainbowRoad/luigiplayer.png"));
+                        player2 = ImageIO.read(new File("res/RainbowRoad/luigiplayersmall.png"));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -357,8 +464,6 @@ public class MooMooMeadowsMultiplayer {
 
 
 
-                // Draw the speedometer
-                speedometer.draw(g, p1velocity);
 
 
                 g.dispose();
@@ -392,11 +497,11 @@ public class MooMooMeadowsMultiplayer {
     // thread responsible for updating player movement
     private static class PlayerMoverplayer1 implements Runnable {
         public PlayerMoverplayer1() {
-            p1velocitystep = 0.02; // aka accel
+            p1velocitystep = 0.01; // aka accel
             p1rotatestep = 0.03; //0.03
-            p1maxvelocity = 5;
+            p1maxvelocity = 2;
             p1brakingforce = 0.04;
-            p1nitroBoost = 4;
+            p1nitroBoost = 2;
 
         }
 
@@ -409,10 +514,12 @@ public class MooMooMeadowsMultiplayer {
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), OffTrack)) {
                     try {
-                        Thread.sleep(4);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
+
+
 
 //                    try {
 //                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
@@ -437,8 +544,8 @@ public class MooMooMeadowsMultiplayer {
 
 
                 } else {
-                    p1maxvelocity = 3;
-                    p1velocitystep = 0.02; // aka accel
+                    p1maxvelocity = 2;
+                    p1velocitystep = 0.01; // aka accel
 
                 }
 
@@ -457,7 +564,7 @@ public class MooMooMeadowsMultiplayer {
 
 
                     p1maxvelocity += p1nitroBoost;
-                    p1velocitystep = 0.04;
+                    p1velocitystep = 0.03;
 
                     double flameX = p1.getX() + (p1.getWidth() / 2.0) - nitroFlamePNGWidth / 2.0;
                     double flameY = p1.getY() + (p1.getHeight() / 2.0) - nitroFlamePNGHeight / 2.0;
@@ -477,7 +584,6 @@ public class MooMooMeadowsMultiplayer {
                     }
                 }
                 if (downPressed == true) {
-                    System.out.println("down IS BEING PRESSED");
 
                     if (p1velocity < -1) { // ensure max rev speed
                         p1velocity = -1;
@@ -526,11 +632,11 @@ public class MooMooMeadowsMultiplayer {
     // thread responsible for updating player movement
     private static class PlayerMoverplayer2 implements Runnable {
         public PlayerMoverplayer2() {
-            p2velocitystep = 0.02; // aka accel
+            p2velocitystep = 0.01; // aka accel
             p2rotatestep = 0.03; //0.03
-            p2maxvelocity = 5;
+            p2maxvelocity = 2;
             p2brakingforce = 0.04;
-            p2nitroBoost = 4;
+            p2nitroBoost = 2;
 
         }
 
@@ -542,6 +648,11 @@ public class MooMooMeadowsMultiplayer {
 
 
                 if (isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 
 //                    try {
 //                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
@@ -556,14 +667,15 @@ public class MooMooMeadowsMultiplayer {
 
                     p2.moveto2(RESPAWN_X2,RESPAWN_Y2);
 
+
 //                    currentSegment = 5;
                     p2velocity = 0.0;
 
 
 
                 } else {
-                    p2maxvelocity = 3;
-                    p2velocitystep = 0.02; // aka accel
+                    p2maxvelocity = 2;
+                    p2velocitystep = 0.01; // aka accel
 
                 }
 
@@ -579,7 +691,7 @@ public class MooMooMeadowsMultiplayer {
                         }
                     }
                     p2maxvelocity += p2nitroBoost;
-                    p2velocitystep = 0.04;
+                    p2velocitystep = 0.02;
                     System.out.println("BOOOOOOOST");
                 }
 
@@ -820,6 +932,7 @@ public class MooMooMeadowsMultiplayer {
 //
 //                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment2.png"));
 //                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace2.png"));
+//                finishline = ImageIO.read(new File("res/RainbowRoad/NOFINISHLINE.png"));
 //
 //
 //            }
@@ -832,6 +945,7 @@ public class MooMooMeadowsMultiplayer {
 //                currentSegment = 15;  // Reset to segment 1
 //                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadSegment3.png"));
 //                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace3.png"));
+//                finishline = ImageIO.read(new File("res/RainbowRoad/NOFINISHLINE.png"));
 //                System.out.println(currentSegment);
 //            }
 //
@@ -852,8 +966,9 @@ public class MooMooMeadowsMultiplayer {
 //                p1velocity = p1velocity * 0.9;
 //                System.out.println("Mario is touching top");
 //                currentSegment = 5;
+//                finishline = ImageIO.read(new File("res/RainbowRoad/FINISHLINEMULTIPLAYER.png"));
 //
-//                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
+//                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadsegment1.png"));
 //                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace1.png"));
 //            }
 
@@ -1195,6 +1310,7 @@ public class MooMooMeadowsMultiplayer {
         }
 
         public void actionPerformed(ActionEvent ae) {
+            lapMenu.setVisible(false);
             startButton.setVisible(false);
             quitButton.setVisible(false);
             endgame = true;
@@ -1211,10 +1327,10 @@ public class MooMooMeadowsMultiplayer {
             dPressed = false;
             qPressed = false;
 
-            p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 4.7);
+            p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0);
             p1velocity = 0.0;
 
-            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 4.7);
+            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 0);
             p2velocity = 0.0;
 
             try { Thread.sleep(32); } catch (InterruptedException ie) { }
@@ -1243,7 +1359,41 @@ public class MooMooMeadowsMultiplayer {
 
 
 
+    private static class GameLevel implements ActionListener {
+        public int decodeLevel(String input) {
+            if (input.equals("One")) {
+                numLapsToWin = 1;
+            } else if (input.equals("Two")) {
+                numLapsToWin = 2;
+            } else if (input.equals("Three")) {
+                numLapsToWin = 3;
+            } else if (input.equals("Four")) {
+                numLapsToWin = 4;
+            } else if (input.equals("Five")) {
+                numLapsToWin = 5;
+            } else if (input.equals("Six")) {
+                numLapsToWin = 6;
+            } else if (input.equals("Seven")) {
+                numLapsToWin = 7;
+            } else if (input.equals("Eight")) {
+                numLapsToWin = 8;
+            } else if (input.equals("Nine")) {
+                numLapsToWin = 9;
+            } else if (input.equals("Ten")) {
+                numLapsToWin = 10;
+            }
+            System.out.println(numLapsToWin);
 
+            return numLapsToWin;
+
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JComboBox cb = (JComboBox) e.getSource();
+            String textLevel = (String) cb.getSelectedItem();
+            level = decodeLevel(textLevel);
+        }
+    }
 
 
 
@@ -1251,7 +1401,7 @@ public class MooMooMeadowsMultiplayer {
     public static void main(String[] args){
         setup();
 
-        src.src.MooMooMeadowsMultiplayer racer2D = new src.src.MooMooMeadowsMultiplayer();
+        src.src.MooMooMeadowsMultiplayer MooMooMeadowsMultiplayer = new src.src.MooMooMeadowsMultiplayer();
         MooMooMeadowsMultiplayer.setup();
         MooMooMeadowsMultiplayer.speedometer = new Speedometer(20, 20);
 
@@ -1267,10 +1417,12 @@ public class MooMooMeadowsMultiplayer {
         gbc.ipady = 15;
         gbc.ipadx = 50;
 
+
         startButton = new MyButton("START RACE");
         startButton.addActionListener(new StartGame(myPanel));
         setButtonAppearance(startButton);
         myPanel.add(startButton, gbc);
+
 
         gbc.insets = new Insets(10, 0, 0, 0);
 
@@ -1280,8 +1432,16 @@ public class MooMooMeadowsMultiplayer {
         myPanel.add(quitButton, gbc);
 
 
+        String[] laps = {"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"};
+        lapMenu = new JComboBox<String>(laps);
+        lapMenu.setSelectedIndex(2);
+        lapMenu.addActionListener(new GameLevel());
+        myPanel.add(lapMenu, gbc);
 
-
+        System.out.println(lapMenu);
+        appFrame.getContentPane().add(myPanel, "South");
+        appFrame.setVisible(true);
+// Disable focus traversal keys for the JComboBox
 
         bindKey(myPanel, "W");
         bindKey(myPanel, "S");
@@ -1349,14 +1509,16 @@ public class MooMooMeadowsMultiplayer {
     private static long lapStartTime;
     private static long bestLapTime = Long.MAX_VALUE;
     private static long currentLapTime;
-    private static int lapCount = 0;
-    private static boolean lapInProgress = false;
+    private static int lapCount1 = 0;
+    private static int lapCount2 = 0;
 
 
     private static Boolean endgame;
     private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, qPressed;
 
     private static JButton startButton, quitButton;
+
+    private static JComboBox<String> lapMenu;
 
     private static Color CELESTIAL = new Color(64, 224, 208);
     private static Color HIGHLIGHT = new Color(199, 199, 199);
@@ -1377,14 +1539,33 @@ public class MooMooMeadowsMultiplayer {
     private static JFrame appFrame;
 
     private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
-    private static double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
-    private static double RESPAWN_Y = 343.13283518037696; // Set the appropriate y-coordinate
+    private static double RESPAWN_X = 1081 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y = 220; // Set the appropriate y-coordinate
 
-    private static double RESPAWN_X2 = 956.1883469051929 ; // Set the appropriate x-coordinate
-    private static double RESPAWN_Y2 = 343.13283518037696; // Set the appropriate y-coordinate
+    private static double RESPAWN_X2 = 1104 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y2 = 220; // Set the appropriate y-coordinate
+    private static double LaptimeP1=0;
+    private static double LaptimeP2=0;
+    private static double bestLapP1=0;
+    private static double bestLapP2=0;
 
+    private static long lapStartTimeP1 = 0;
+    private static long lapEndTimeP1 = 0;
+    private static long lapEndTimeP2 = 0;
+
+    private static long lapStartTimeP2 = 0;
+
+
+    static boolean hasCrossedFinishLinep1 = false;
+    static boolean hasCrossedFinishLinep2 = false;
+    static boolean hasCrossedCheckPointp1 = false;
+    static boolean hasCrossedCheckPointp2 = false;
+
+    private static int level;
+
+    private static int numLapsToWin = 3;
 
     private static BufferStrategy bs;
-    private static BufferedImage OnTrack, OffTrack, player1, player2, nitroFlamePNG; // TODO: add player2
+    private static BufferedImage OnTrack, OffTrack, finishline, checkpoint, player1, player2, nitroFlamePNG; // TODO: add player2
 
 }

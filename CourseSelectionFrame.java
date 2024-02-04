@@ -10,26 +10,36 @@ public class CourseSelectionFrame extends JFrame {
         setSize(1280, 840); // Increased width to accommodate more buttons
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JButton rainbowRoadButton = new JButton("Rainbow Road");
-        JButton rainbowRoadMultiplayerButton = new JButton("Rainbow Road Multiplayer");
-        JButton MooMooMeadowsMultiplayerButton = new JButton("Moo Moo Meadows Multiplayer");
+        JButton RainbowRoadButton = new JButton("Rainbow Road");
+        JButton RainbowRoadMultiplayerButton = new JButton("Rainbow Road Multiplayer");
+        JButton MooMooMeadowsMultiplayerMultiplayerButton = new JButton("Moo Moo Meadows Multiplayer");
 
-        JButton MooMooMeadowsButton = new JButton("Moo Moo Meadows");
+        JButton MooMooMeadowsMultiplayerButton = new JButton("Moo Moo Meadows");
         JButton MushroomGeorgeButton = new JButton("Mushroom George");
         JButton CBUTrackButton = new JButton("CBU Track!");
 
-        CBUTrackButton.addActionListener(e -> openCBUTrackFrame("res/largerrainbowroad.png"));
-        rainbowRoadButton.addActionListener(e -> openRacer2DFrame("res/largerrainbowroad.png"));
-        MooMooMeadowsButton.addActionListener(e -> openMooMooMeadowsFrame("res/largerrainbowroad.png"));
-        MushroomGeorgeButton.addActionListener(e -> openMushroomGorgeFrame("res/largerrainbowroad.png"));
+
+        RainbowRoadMultiplayerButton.addActionListener(e -> openRainbowRoadMultiplayer("res/rainbowroad/largerrainbowroadmultiplayer.png"));
+
+        CBUTrackButton.addActionListener(e -> openCBUTrackFrame("res/rainbowroad/largerrainbowroad.png"));
+
+        RainbowRoadButton.addActionListener(e -> openRacer2DFrame("res/rainbowroad/largerrainbowroad.png"));
+
+        MooMooMeadowsMultiplayerButton.addActionListener(e -> openMooMooMeadowsMultiplayerFrame("res/MooMooMeadows/MooMooMeadows.png"));
+
+        MushroomGeorgeButton.addActionListener(e -> openMushroomGorgeFrame("res/rainbowroad/largerrainbowroad.png"));
+
+        MushroomGeorgeButton.addActionListener(e -> openMushroomGorgeFrame("res/rainbowroad/largerrainbowroad.png"));
+
 
 
         JPanel panel = new JPanel();
-        panel.add(rainbowRoadButton);
-        panel.add(rainbowRoadMultiplayerButton);
+        panel.add(RainbowRoadButton);
 
-        panel.add(MooMooMeadowsButton);
+        panel.add(RainbowRoadMultiplayerButton);
+
         panel.add(MooMooMeadowsMultiplayerButton);
+        panel.add(MooMooMeadowsMultiplayerMultiplayerButton);
 
         panel.add(MushroomGeorgeButton);
         panel.add(CBUTrackButton);
@@ -56,13 +66,13 @@ public class CourseSelectionFrame extends JFrame {
         });
     }
 
-    private void openMooMooMeadowsFrame(String trackImagePath) {
+    private void openMooMooMeadowsMultiplayerFrame(String trackImagePath) {
         // Open the main game frame with the specified track image
         SwingUtilities.invokeLater(() -> {
             try {
                 // Run the Moo Moo MeadowsFrame class using reflection
-                Class<?> MooMooMeadowsClass = Class.forName("src.src.MooMooMeadows");
-                MooMooMeadowsClass.getMethod("main", String[].class).invoke(null, (Object) null);
+                Class<?> MooMooMeadowsMultiplayerClass = Class.forName("src.src.MooMooMeadowsMultiplayer");
+                MooMooMeadowsMultiplayerClass.getMethod("main", String[].class).invoke(null, (Object) null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -92,6 +102,20 @@ public class CourseSelectionFrame extends JFrame {
                 // Run the CBU Track class using reflection
                 Class<?> CBUTrackClass = Class.forName("src.src.CBUTrack");
                 CBUTrackClass.getMethod("main", String[].class).invoke(null, (Object) null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            dispose(); // Close the course selection frame
+        });
+    }
+
+    private void openRainbowRoadMultiplayer(String trackImagePath) {
+        // Open the main game frame with the specified track image
+        SwingUtilities.invokeLater(() -> {
+            try {
+                // Run the CBU Track class using reflection
+                Class<?> RainbowRoadMuliplayerClass = Class.forName("src.src.RainbowRoadMultiplayer");
+                RainbowRoadMuliplayerClass.getMethod("main", String[].class).invoke(null, (Object) null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
