@@ -94,7 +94,7 @@ public class RainbowRoadMultiplayer {
 
 
 
-            OnTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayer.png") );
+            OnTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayerlogo.png") );
 //            OnTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
             OffTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayerspace.png") );
@@ -433,7 +433,7 @@ public class RainbowRoadMultiplayer {
                 g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
                         (int) (p2.getY2() + 0.5), null);
 
-                if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                if (qPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
                         player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayerboostingsmall.png") );
                     } catch (IOException e) {
@@ -451,7 +451,7 @@ public class RainbowRoadMultiplayer {
                 if (i==10) {
                     i=0;
                 }
-                if (!tabPressed) {
+                if (!qPressed) {
                     try {
                         player2 = ImageIO.read(new File("res/RainbowRoad/luigiplayersmall.png"));
                     } catch (IOException e) {
@@ -680,7 +680,7 @@ public class RainbowRoadMultiplayer {
                 }
 
 
-                if (tabPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
+                if (qPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
                     //CHEAT
                     // NITRO
                     if (wPressed == false) {
@@ -732,7 +732,7 @@ public class RainbowRoadMultiplayer {
                     }
                 }
                 // apply drag force
-                if (!wPressed && !sPressed && !aPressed && !dPressed && !tabPressed
+                if (!wPressed && !sPressed && !aPressed && !dPressed && !qPressed
                         && p2velocity != 0) {
                     if ((p2velocity - 0.1) < 0) {
                         p2velocity = 0;
@@ -1259,7 +1259,7 @@ public class RainbowRoadMultiplayer {
             if (action.equals("S")) { sPressed = true; }
             if (action.equals("A")) { aPressed = true; }
             if (action.equals("D")) { dPressed = true; }
-            if (action.equals("TAB")) { tabPressed = true; }
+            if (action.equals("Q")) { qPressed = true; }
 
         }
 
@@ -1288,7 +1288,7 @@ public class RainbowRoadMultiplayer {
             if (action.equals("S")) { sPressed = false; }
             if (action.equals("A")) { aPressed = false; }
             if (action.equals("D")) { dPressed = false; }
-            if (action.equals("TAB")) { tabPressed = false; }
+            if (action.equals("Q")) { qPressed = false; }
 
 
 
@@ -1325,7 +1325,7 @@ public class RainbowRoadMultiplayer {
             sPressed = false;
             aPressed = false;
             dPressed = false;
-            tabPressed = false;
+            qPressed = false;
 
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0);
             p1velocity = 0.0;
@@ -1447,7 +1447,7 @@ public class RainbowRoadMultiplayer {
         bindKey(myPanel, "S");
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
-        bindKey(myPanel, "TAB");
+        bindKey(myPanel, "Q");
 
 
         bindKey(myPanel, "UP");
@@ -1514,7 +1514,7 @@ public class RainbowRoadMultiplayer {
 
 
     private static Boolean endgame;
-    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, tabPressed;
+    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, qPressed;
 
     private static JButton startButton, quitButton;
 
