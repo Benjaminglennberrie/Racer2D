@@ -100,8 +100,9 @@ public class RainbowRoadMultiplayer {
             OffTrack = ImageIO.read( new File("res/RainbowRoad/largerrainbowroadmultiplayerspace.png") );
 //            OffTrack = ImageIO.read( new File("/Users/benjaminbrodwolf/IdeaProjects/Racer2D-Benjamin-Brodwolf/src/src/resources/CBUTrack.png") );
 
-            finishline = ImageIO.read( new File("res/RainbowRoad/FINISHLINE.png") );
+            finishline = ImageIO.read( new File("res/RainbowRoad/FINISHLINEMULTIPLAYER.png") );
 
+            checkpoint = ImageIO.read( new File("res/RainbowRoad/CHECKPOINTMULTIPLAYER.png") );
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -277,6 +278,7 @@ public class RainbowRoadMultiplayer {
 
                 g2D.drawImage(finishline, XOFFSET, YOFFSET, null);
 
+                g2D.drawImage(checkpoint, XOFFSET, YOFFSET, null);
 
 
 
@@ -295,14 +297,29 @@ public class RainbowRoadMultiplayer {
                 double bestLapP2 = 0;
                 g2D.drawString("Best Lap Time " + bestLapP2 + " seconds", 850, 50);
 
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), checkpoint)) {
+                    hasCrossedCheckPointp1 = true;
+                }
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), checkpoint)) {
+                    hasCrossedCheckPointp2 = true;
+                }
 
+                if (isCollidingWithGrass(p1.getX(), p1.getY(), finishline)) {
+                    long lapEndTimeP1 = System.currentTimeMillis();
 
+                }
+
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), finishline)) {
+                    long lapEndTimeP2 = System.currentTimeMillis();
+
+                }
 
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), finishline)) {
-                    if (!hasCrossedFinishLinep1) {
+                    if (!hasCrossedFinishLinep1 && hasCrossedCheckPointp1 == true) {
                         lapCount1 += 1;
                         hasCrossedFinishLinep1 = true;
+                        hasCrossedCheckPointp1 = false;
 
                         // Stop timing the lap
                         long lapEndTimeP1 = System.currentTimeMillis();
@@ -325,6 +342,37 @@ public class RainbowRoadMultiplayer {
                     hasCrossedFinishLinep1 = false;
                 }
 
+
+                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), finishline)) {
+                    if (!hasCrossedFinishLinep2 && hasCrossedCheckPointp2 == true) {
+                        lapCount2 += 1;
+                        hasCrossedFinishLinep2 = true;
+                        hasCrossedCheckPointp2 = false;
+
+                        // Stop timing the lap
+                        long lapEndTimeP2 = System.currentTimeMillis();
+                        double lapStartTimeP2 = 0;
+                        double lapTimeP2 = (lapEndTimeP2 - lapStartTimeP2) / 1000.0;
+
+                        // Display lap time for player 2
+                        System.out.println("Player 2 Lap Time: " + lapTimeP2 + " seconds");
+
+                        // Check if it's a new best lap
+                        if (lapTimeP2 < bestLapP2) {
+                            bestLapP2 = lapTimeP2;
+                            System.out.println("Player 1 New Best Lap: " + bestLapP2 + " seconds");
+                        }
+
+                        // Start timing the new lap
+                        lapStartTimeP2 = System.currentTimeMillis();
+                    }
+                } else {
+                    hasCrossedFinishLinep2 = false;
+                }
+
+
+
+
                 // Draw the player
                 g2D.drawImage(rotateImageObject(p1).filter(player1, null), (int) (p1.getX() + 0.5),
                         (int) (p1.getY() + 0.5), null);
@@ -338,7 +386,7 @@ public class RainbowRoadMultiplayer {
                         throw new RuntimeException(e);
                     }
                 }
-                System.out.println("Coords:" + p1.x + "  " + p1.y);
+//                System.out.println("Coords:" + p1.x + "  " + p1.y);
 
 
 // RESPAWN PROGRAMMING
@@ -375,7 +423,7 @@ public class RainbowRoadMultiplayer {
                     }
                 }
 
-                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
+//                System.out.println("Player 2 Coords:" + p2.x2 + "  " + p2.y2);
 
                 if (i==10 && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     RESPAWN_X2 = p2.x2;
@@ -518,7 +566,6 @@ public class RainbowRoadMultiplayer {
                     }
                 }
                 if (downPressed == true) {
-                    System.out.println("down IS BEING PRESSED");
 
                     if (p1velocity < -1) { // ensure max rev speed
                         p1velocity = -1;
@@ -901,7 +948,7 @@ public class RainbowRoadMultiplayer {
 //                p1velocity = p1velocity * 0.9;
 //                System.out.println("Mario is touching top");
 //                currentSegment = 5;
-//                finishline = ImageIO.read(new File("res/RainbowRoad/FINISHLINE.png"));
+//                finishline = ImageIO.read(new File("res/RainbowRoad/FINISHLINEMULTIPLAYER.png"));
 //
 //                OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadsegment1.png"));
 //                OffTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroadspace1.png"));
@@ -1261,10 +1308,10 @@ public class RainbowRoadMultiplayer {
             dPressed = false;
             QPressed = false;
 
-            p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 4.7);
+            p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0);
             p1velocity = 0.0;
 
-            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 4.7);
+            p2 = new ImageObject2(p2originalX, p2originalY, p2width, p2height, 0);
             p2velocity = 0.0;
 
             try { Thread.sleep(32); } catch (InterruptedException ie) { }
@@ -1427,11 +1474,11 @@ public class RainbowRoadMultiplayer {
     private static JFrame appFrame;
 
     private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
-    private static double RESPAWN_X = 1001.1883469051929 ; // Set the appropriate x-coordinate
-    private static double RESPAWN_Y = 400; // Set the appropriate y-coordinate
+    private static double RESPAWN_X = 1081 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y = 220; // Set the appropriate y-coordinate
 
-    private static double RESPAWN_X2 = 956.1883469051929 ; // Set the appropriate x-coordinate
-    private static double RESPAWN_Y2 = 400; // Set the appropriate y-coordinate
+    private static double RESPAWN_X2 = 1104 ; // Set the appropriate x-coordinate
+    private static double RESPAWN_Y2 = 220; // Set the appropriate y-coordinate
     private static double LaptimeP1=0;
     private static double LaptimeP2=0;
     private static double BestLapP1 = Double.MAX_VALUE; // Set an initial value as a placeholder
@@ -1439,9 +1486,13 @@ public class RainbowRoadMultiplayer {
 
     static boolean hasCrossedFinishLinep1 = false;
     static boolean hasCrossedFinishLinep2 = false;
+    static boolean hasCrossedCheckPointp1 = false;
+    static boolean hasCrossedCheckPointp2 = false;
+
+
 
 
     private static BufferStrategy bs;
-    private static BufferedImage OnTrack, OffTrack, finishline, player1, player2, nitroFlamePNG; // TODO: add player2
+    private static BufferedImage OnTrack, OffTrack, finishline, checkpoint, player1, player2, nitroFlamePNG; // TODO: add player2
 
 }
