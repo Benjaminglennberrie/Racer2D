@@ -183,18 +183,6 @@ public class RainbowRoadMultiplayer {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     private static class RoundBorder implements Border { // Used for rounded buttons
         private int radius;
         private Color color;
@@ -268,8 +256,13 @@ public class RainbowRoadMultiplayer {
             }
 
             while (!endgame) {
+
+
                 Graphics g = bs.getDrawGraphics();
                 Graphics2D g2D = (Graphics2D) g;
+
+
+
 
                 // Draw the track
                 g2D.drawImage(OffTrack, XOFFSET, YOFFSET, null);
@@ -283,19 +276,48 @@ public class RainbowRoadMultiplayer {
 
 
 
+                g2D.setColor(Color.RED);
+
+                g2D.setFont(new Font("Arial", Font.PLAIN, 200));
+
+                //Check if a player has won.
+                if (lapCount1 == numLapsToWin) {
+                    g2D.drawString("Mario won!", 75, 420 );
+                    BackgroundMusic menu_theme = new BackgroundMusic("res/finishlapyay.wav");
+                    menu_theme.play();
+                    endgame = true;
+                }
+                //Check if a player has won.
+                if (lapCount2 == numLapsToWin) {
+                    g2D.drawString("Luigi won!", 75, 420 );
+                    BackgroundMusic menu_theme = new BackgroundMusic("res/finishlapyay.wav");
+                    menu_theme.play();
+                    endgame = true;
+                }
+
+
+
+
+
                 g2D.setColor(Color.LIGHT_GRAY);
 
                 g2D.setFont(new Font("Arial", Font.PLAIN, 10));
 
                 g2D.drawString("Player 1:  Velocity: " + Math.round(p1velocity * 10), 50, 50);
                 g2D.drawString("Lap Counter " + lapCount1, 200, 50);
-                double bestLapP1 = 0;
-                g2D.drawString("Best Lap Time " + bestLapP1 + " seconds", 300, 50);
+                g2D.drawString("Best Lap Time " + String.format("%.2f", bestLapP1) + " seconds", 300, 50);
 
                 g2D.drawString("Player 2:  Velocity: " + Math.round(p2velocity * 10), 600, 50);
                 g2D.drawString("Lap Counter " + lapCount2, 750, 50);
-                double bestLapP2 = 0;
-                g2D.drawString("Best Lap Time " + bestLapP2 + " seconds", 850, 50);
+                g2D.drawString("Best Lap Time " + String.format("%.2f", bestLapP2) + " seconds", 850, 50);
+
+
+                if (bestLapP1 == 0) {
+                    bestLapP1 = LaptimeP1;
+                }
+                if (bestLapP2 == 0) {
+                    bestLapP2 = LaptimeP2;
+                }
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), checkpoint)) {
                     hasCrossedCheckPointp1 = true;
@@ -304,15 +326,9 @@ public class RainbowRoadMultiplayer {
                     hasCrossedCheckPointp2 = true;
                 }
 
-                if (isCollidingWithGrass(p1.getX(), p1.getY(), finishline)) {
-                    long lapEndTimeP1 = System.currentTimeMillis();
 
-                }
 
-                if (isCollidingWithGrass(p2.getX2(), p2.getY2(), finishline)) {
-                    long lapEndTimeP2 = System.currentTimeMillis();
 
-                }
 
 
                 if (isCollidingWithGrass(p1.getX(), p1.getY(), finishline)) {
@@ -322,22 +338,23 @@ public class RainbowRoadMultiplayer {
                         hasCrossedCheckPointp1 = false;
 
                         // Stop timing the lap
-                        long lapEndTimeP1 = System.currentTimeMillis();
-                        double lapStartTimeP1 = 0;
-                        double lapTimeP1 = (lapEndTimeP1 - lapStartTimeP1) / 1000.0;
+                        lapEndTimeP1 = System.currentTimeMillis();
+                        LaptimeP1 = (lapEndTimeP1 - lapStartTimeP1) / 1000.0;
 
                         // Display lap time for player 1
-                        System.out.println("Player 1 Lap Time: " + lapTimeP1 + " seconds");
+                        System.out.println("Player 1 Lap Time: " + LaptimeP1 + " seconds");
 
                         // Check if it's a new best lap
-                        if (lapTimeP1 < bestLapP1) {
-                            bestLapP1 = lapTimeP1;
+                        if (LaptimeP1 < bestLapP1) {
+                            bestLapP1 = LaptimeP1;
                             System.out.println("Player 1 New Best Lap: " + bestLapP1 + " seconds");
                         }
 
                         // Start timing the new lap
                         lapStartTimeP1 = System.currentTimeMillis();
                     }
+                    lapStartTimeP1 = System.currentTimeMillis();
+
                 } else {
                     hasCrossedFinishLinep1 = false;
                 }
@@ -350,22 +367,23 @@ public class RainbowRoadMultiplayer {
                         hasCrossedCheckPointp2 = false;
 
                         // Stop timing the lap
-                        long lapEndTimeP2 = System.currentTimeMillis();
-                        double lapStartTimeP2 = 0;
-                        double lapTimeP2 = (lapEndTimeP2 - lapStartTimeP2) / 1000.0;
+                        lapEndTimeP2 = System.currentTimeMillis();
+                        LaptimeP2 = (lapEndTimeP2 - lapStartTimeP2) / 1000.0;
 
                         // Display lap time for player 2
-                        System.out.println("Player 2 Lap Time: " + lapTimeP2 + " seconds");
+                        System.out.println("Player 2 Lap Time: " + LaptimeP2 + " seconds");
 
                         // Check if it's a new best lap
-                        if (lapTimeP2 < bestLapP2) {
-                            bestLapP2 = lapTimeP2;
+                        if (LaptimeP2 < bestLapP2) {
+                            bestLapP2 = LaptimeP2;
                             System.out.println("Player 1 New Best Lap: " + bestLapP2 + " seconds");
                         }
 
                         // Start timing the new lap
                         lapStartTimeP2 = System.currentTimeMillis();
                     }
+                    lapStartTimeP2 = System.currentTimeMillis();
+
                 } else {
                     hasCrossedFinishLinep2 = false;
                 }
@@ -415,7 +433,7 @@ public class RainbowRoadMultiplayer {
                 g2D.drawImage(rotateImageObject2(p2).filter(player2, null), (int) (p2.getX2() + 0.5),
                         (int) (p2.getY2() + 0.5), null);
 
-                if (QPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
+                if (tabPressed && !isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack)) {
                     try {
                         player2 = ImageIO.read( new File("res/RainbowRoad/luigiplayerboostingsmall.png") );
                     } catch (IOException e) {
@@ -433,7 +451,7 @@ public class RainbowRoadMultiplayer {
                 if (i==10) {
                     i=0;
                 }
-                if (!QPressed) {
+                if (!tabPressed) {
                     try {
                         player2 = ImageIO.read(new File("res/RainbowRoad/luigiplayersmall.png"));
                     } catch (IOException e) {
@@ -446,8 +464,6 @@ public class RainbowRoadMultiplayer {
 
 
 
-                // Draw the speedometer
-                speedometer.draw(g, p1velocity);
 
 
                 g.dispose();
@@ -502,6 +518,8 @@ public class RainbowRoadMultiplayer {
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
+
+
 
 //                    try {
 //                        OnTrack = ImageIO.read(new File("res/RainbowRoad/largerrainbowroad.png"));
@@ -662,7 +680,7 @@ public class RainbowRoadMultiplayer {
                 }
 
 
-                if (QPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
+                if (tabPressed == true && isCollidingWithGrass(p2.getX2(), p2.getY2(), OffTrack) == false) {
                     //CHEAT
                     // NITRO
                     if (wPressed == false) {
@@ -714,7 +732,7 @@ public class RainbowRoadMultiplayer {
                     }
                 }
                 // apply drag force
-                if (!wPressed && !sPressed && !aPressed && !dPressed && !QPressed
+                if (!wPressed && !sPressed && !aPressed && !dPressed && !tabPressed
                         && p2velocity != 0) {
                     if ((p2velocity - 0.1) < 0) {
                         p2velocity = 0;
@@ -1241,7 +1259,7 @@ public class RainbowRoadMultiplayer {
             if (action.equals("S")) { sPressed = true; }
             if (action.equals("A")) { aPressed = true; }
             if (action.equals("D")) { dPressed = true; }
-            if (action.equals("Q")) { QPressed = true; }
+            if (action.equals("TAB")) { tabPressed = true; }
 
         }
 
@@ -1270,7 +1288,7 @@ public class RainbowRoadMultiplayer {
             if (action.equals("S")) { sPressed = false; }
             if (action.equals("A")) { aPressed = false; }
             if (action.equals("D")) { dPressed = false; }
-            if (action.equals("Q")) { QPressed = false; }
+            if (action.equals("TAB")) { tabPressed = false; }
 
 
 
@@ -1292,6 +1310,7 @@ public class RainbowRoadMultiplayer {
         }
 
         public void actionPerformed(ActionEvent ae) {
+            lapMenu.setVisible(false);
             startButton.setVisible(false);
             quitButton.setVisible(false);
             endgame = true;
@@ -1306,7 +1325,7 @@ public class RainbowRoadMultiplayer {
             sPressed = false;
             aPressed = false;
             dPressed = false;
-            QPressed = false;
+            tabPressed = false;
 
             p1 = new ImageObject(p1originalX, p1originalY, p1width, p1height, 0);
             p1velocity = 0.0;
@@ -1340,7 +1359,41 @@ public class RainbowRoadMultiplayer {
 
 
 
+    private static class GameLevel implements ActionListener {
+        public int decodeLevel(String input) {
+            if (input.equals("One")) {
+                numLapsToWin = 1;
+            } else if (input.equals("Two")) {
+                numLapsToWin = 2;
+            } else if (input.equals("Three")) {
+                numLapsToWin = 3;
+            } else if (input.equals("Four")) {
+                numLapsToWin = 4;
+            } else if (input.equals("Five")) {
+                numLapsToWin = 5;
+            } else if (input.equals("Six")) {
+                numLapsToWin = 6;
+            } else if (input.equals("Seven")) {
+                numLapsToWin = 7;
+            } else if (input.equals("Eight")) {
+                numLapsToWin = 8;
+            } else if (input.equals("Nine")) {
+                numLapsToWin = 9;
+            } else if (input.equals("Ten")) {
+                numLapsToWin = 10;
+            }
+            System.out.println(numLapsToWin);
 
+            return numLapsToWin;
+
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JComboBox cb = (JComboBox) e.getSource();
+            String textLevel = (String) cb.getSelectedItem();
+            level = decodeLevel(textLevel);
+        }
+    }
 
 
 
@@ -1364,10 +1417,12 @@ public class RainbowRoadMultiplayer {
         gbc.ipady = 15;
         gbc.ipadx = 50;
 
+
         startButton = new MyButton("START RACE");
         startButton.addActionListener(new StartGame(myPanel));
         setButtonAppearance(startButton);
         myPanel.add(startButton, gbc);
+
 
         gbc.insets = new Insets(10, 0, 0, 0);
 
@@ -1377,14 +1432,22 @@ public class RainbowRoadMultiplayer {
         myPanel.add(quitButton, gbc);
 
 
+        String[] laps = {"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"};
+        lapMenu = new JComboBox<String>(laps);
+        lapMenu.setSelectedIndex(2);
+        lapMenu.addActionListener(new GameLevel());
+        myPanel.add(lapMenu, gbc);
 
-
+        System.out.println(lapMenu);
+        appFrame.getContentPane().add(myPanel, "South");
+        appFrame.setVisible(true);
+// Disable focus traversal keys for the JComboBox
 
         bindKey(myPanel, "W");
         bindKey(myPanel, "S");
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
-        bindKey(myPanel, "Q");
+        bindKey(myPanel, "TAB");
 
 
         bindKey(myPanel, "UP");
@@ -1451,9 +1514,11 @@ public class RainbowRoadMultiplayer {
 
 
     private static Boolean endgame;
-    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, QPressed;
+    private static Boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed, wPressed, sPressed, aPressed, dPressed, tabPressed;
 
     private static JButton startButton, quitButton;
+
+    private static JComboBox<String> lapMenu;
 
     private static Color CELESTIAL = new Color(64, 224, 208);
     private static Color HIGHLIGHT = new Color(199, 199, 199);
@@ -1481,16 +1546,24 @@ public class RainbowRoadMultiplayer {
     private static double RESPAWN_Y2 = 220; // Set the appropriate y-coordinate
     private static double LaptimeP1=0;
     private static double LaptimeP2=0;
-    private static double BestLapP1 = Double.MAX_VALUE; // Set an initial value as a placeholder
-    private static double BestLapP2 = Double.MAX_VALUE;
+    private static double bestLapP1=0;
+    private static double bestLapP2=0;
+
+    private static long lapStartTimeP1 = 0;
+    private static long lapEndTimeP1 = 0;
+    private static long lapEndTimeP2 = 0;
+
+    private static long lapStartTimeP2 = 0;
+
 
     static boolean hasCrossedFinishLinep1 = false;
     static boolean hasCrossedFinishLinep2 = false;
     static boolean hasCrossedCheckPointp1 = false;
     static boolean hasCrossedCheckPointp2 = false;
 
+    private static int level;
 
-
+    private static int numLapsToWin = 3;
 
     private static BufferStrategy bs;
     private static BufferedImage OnTrack, OffTrack, finishline, checkpoint, player1, player2, nitroFlamePNG; // TODO: add player2
